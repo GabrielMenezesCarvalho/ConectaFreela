@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: conectafreela-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: conectafreela
+      POSTGRES_PASSWORD: conectafreela
+      POSTGRES_DB: conectafreela
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U conectafreela"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
+
