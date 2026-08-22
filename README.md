@@ -1,4 +1,4 @@
-# ConectaFreela — starter
+# ConectaFreela
 
 Base técnica do projeto
 
