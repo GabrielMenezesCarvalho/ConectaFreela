@@ -17,6 +17,49 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build:
+      context: .
+      target: api
+    container_name: conectafreela-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://conectafreela:conectafreela@postgres:5432/conectafreela?schema=public
+      PORT: 3333
+      WEB_URL: ${WEB_URL:-http://localhost:3000}
+    ports:
+      - "3333:3333"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3333').then(() => process.exit(0)).catch(() => process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3333/api}
+    container_name: conectafreela-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3333/api}
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   postgres_data:
-
