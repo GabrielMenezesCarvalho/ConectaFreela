@@ -11,7 +11,7 @@
     "lint": "npm run lint -w api && npm run lint -w web",
     "test": "npm run test -w api -- --runInBand",
     "db:generate": "npm run prisma:generate -w api",
-    "db:migrate": "npm run prisma:migrate -w api",
+    "db:migrate": "prisma migrate dev --schema apps/api/prisma/schema.prisma",
     "db:studio": "npm run prisma:studio -w api"
   },
   "devDependencies": {

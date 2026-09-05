@@ -7,4 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Adicione os models do domínio aqui quando começar a implementação.
+enum UserRole {
+  TALENT
+  ORGANIZATION
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  passwordHash  String
+  role          UserRole
+  talentProfile TalentProfile?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("users")
+}
+
+model TalentProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  bio            String?
+  skills         String[] @default([])
+  availability   String
+  portfolioLinks String[] @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("talent_profiles")
+}
