@@ -2,7 +2,9 @@
   "name": "conectafreela",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["apps/*"],
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "dev": "concurrently -n WEB,API -c cyan,magenta \"npm run dev -w web\" \"npm run start:dev -w api\"",
     "dev:web": "npm run dev -w web",
@@ -12,12 +14,14 @@
     "test": "npm run test -w api -- --runInBand",
     "db:generate": "npm run prisma:generate -w api",
     "db:migrate": "prisma migrate dev --schema apps/api/prisma/schema.prisma",
+    "db:seed": "prisma db seed --schema apps/api/prisma/schema.prisma",
     "db:studio": "npm run prisma:studio -w api"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2"
   },
   "engines": {
-    "node": ">=20.9"
+    "node": ">=20.19"
   }
 }
