@@ -15,9 +15,6 @@ export default function EntrarPage() {
           ← Voltar ao início
         </Link>
         <h1 className="mt-6 text-3xl font-semibold">Entrar</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          Informe uma conta cadastrada para validar as credenciais na API.
-        </p>
         <LoginForm />
       </section>
     </main>
