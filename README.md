@@ -74,3 +74,7 @@ npm run db:seed
 ```
 
 A seed cria 20 talentos com seus respectivos perfis e 20 organizações. Os usuários de demonstração usam e-mails no formato `talento.01@example.com` ou `organizacao.01@example.com` e a senha `Conecta@123`.
+
+## Deploy em produção
+
+O projeto inclui configuração para publicar `conectafreela.tech` usando o Nginx global da VPS como proxy reverso. Consulte [deploy/VPS.md](deploy/VPS.md) para preparar as variáveis, subir os containers e emitir o certificado HTTPS.
