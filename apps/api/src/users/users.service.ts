@@ -64,6 +64,13 @@ export class UsersService {
     }
   }
 
+  findAll() {
+    return this.prisma.user.findMany({
+      select: publicUserSelect,
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async findOne(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },

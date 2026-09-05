@@ -19,18 +19,37 @@ type Opportunity = {
   description: string;
 };
 
+type ApiUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: SessionUser["role"];
+  createdAt: string;
+};
+
+const dateFormatter = new Intl.DateTimeFormat("pt-BR");
+
+async function fetchJson<T>(url: string, signal: AbortSignal): Promise<T> {
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error("Não foi possível carregar a listagem.");
+  return (await response.json()) as T;
+}
+
 export function RoleDashboard({
   requiredRole,
   title,
   description,
+  showUsers = false,
 }: {
   requiredRole: SessionUser["role"];
   title: string;
   description: string;
+  showUsers?: boolean;
 }) {
   const router = useRouter();
   const [user, setUser] = useState<SessionUser | null>(null);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [users, setUsers] = useState<ApiUser[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -46,13 +65,16 @@ export function RoleDashboard({
       if (isActive) setUser(currentUser);
     });
 
-    fetch(`${API_URL}/opportunities`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok)
-          throw new Error("Não foi possível carregar a listagem.");
-        return (await response.json()) as Opportunity[];
+    Promise.all([
+      fetchJson<Opportunity[]>(`${API_URL}/opportunities`, controller.signal),
+      showUsers
+        ? fetchJson<ApiUser[]>(`${API_URL}/users`, controller.signal)
+        : Promise.resolve([]),
+    ])
+      .then(([opportunityList, userList]) => {
+        setOpportunities(opportunityList);
+        setUsers(userList);
       })
-      .then(setOpportunities)
       .catch((requestError: unknown) => {
         if (
           requestError instanceof DOMException &&
@@ -71,7 +93,7 @@ export function RoleDashboard({
       isActive = false;
       controller.abort();
     };
-  }, [requiredRole, router]);
+  }, [requiredRole, router, showUsers]);
 
   function logout() {
     clearSession();
@@ -113,6 +135,66 @@ export function RoleDashboard({
           <p className="mt-8 text-slate-500">Carregando oportunidades...</p>
         )}
 
+        {showUsers && !error && users.length > 0 && (
+          <>
+            <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <SummaryCard label="Usuários" value={users.length} />
+              <SummaryCard
+                label="Talentos"
+                value={users.filter((item) => item.role === "TALENT").length}
+              />
+              <SummaryCard
+                label="Organizações"
+                value={
+                  users.filter((item) => item.role === "ORGANIZATION").length
+                }
+              />
+              <SummaryCard label="Oportunidades" value={opportunities.length} />
+            </section>
+
+            <section className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white">
+              <div className="border-b border-slate-200 px-5 py-4">
+                <h2 className="text-xl font-semibold">Usuários cadastrados</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-2xl text-left text-sm">
+                  <thead className="bg-slate-50 text-slate-500">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">Nome</th>
+                      <th className="px-5 py-3 font-medium">E-mail</th>
+                      <th className="px-5 py-3 font-medium">Perfil</th>
+                      <th className="px-5 py-3 font-medium">Cadastro</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {users.map((listedUser) => (
+                      <tr key={listedUser.id}>
+                        <td className="px-5 py-3 font-medium">
+                          {listedUser.name}
+                        </td>
+                        <td className="px-5 py-3 text-slate-600">
+                          {listedUser.email}
+                        </td>
+                        <td className="px-5 py-3">
+                          {listedUser.role === "TALENT"
+                            ? "Talento"
+                            : "Organização"}
+                        </td>
+                        <td className="px-5 py-3 text-slate-600">
+                          {dateFormatter.format(new Date(listedUser.createdAt))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </>
+        )}
+
+        <h2 className="mt-8 text-xl font-semibold">
+          Oportunidades disponíveis
+        </h2>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {opportunities.map((opportunity) => (
             <article
@@ -146,5 +228,14 @@ export function RoleDashboard({
         </div>
       </div>
     </main>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: number }) {
+  return (
+    <article className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-sm text-slate-500">{label}</p>
+      <p className="mt-2 text-3xl font-semibold">{value}</p>
+    </article>
   );
 }

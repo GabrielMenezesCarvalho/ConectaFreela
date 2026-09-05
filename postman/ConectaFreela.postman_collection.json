@@ -33,6 +33,14 @@
       }
     },
     {
+      "name": "GET - Listar usuários",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/users"
+      }
+    },
+    {
       "name": "POST - Login de talento da seed",
       "request": {
         "method": "POST",

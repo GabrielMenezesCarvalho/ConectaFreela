@@ -5,7 +5,8 @@ export default function AdminPage() {
     <RoleDashboard
       requiredRole="ORGANIZATION"
       title="Painel administrativo"
-      description="Listagem inicial de oportunidades para a organização."
+      description="Visão geral dos usuários e oportunidades da plataforma."
+      showUsers
     />
   );
 }

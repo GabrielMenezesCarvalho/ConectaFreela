@@ -20,16 +20,27 @@ describe('UsersService', () => {
     };
   };
 
+  type FindUsersArgs = {
+    select: Record<string, boolean>;
+    orderBy: { createdAt: 'desc' };
+  };
+
   let capturedCreateArgs: CreateUserArgs | undefined;
+  let capturedFindUsersArgs: FindUsersArgs | undefined;
   const createUser = jest.fn((args: CreateUserArgs) => {
     capturedCreateArgs = args;
     return Promise.resolve({ id: 'user-id' });
   });
   const findUser =
     jest.fn<() => Promise<{ id: string; role: UserRole } | null>>();
+  const findUsers = jest.fn((args: FindUsersArgs) => {
+    capturedFindUsersArgs = args;
+    return Promise.resolve([]);
+  });
   const user = {
     create: createUser,
     findUnique: findUser,
+    findMany: findUsers,
   };
   const talentProfile = {
     upsert: jest.fn(),
@@ -39,6 +50,7 @@ describe('UsersService', () => {
 
   beforeEach(() => {
     capturedCreateArgs = undefined;
+    capturedFindUsersArgs = undefined;
     jest.clearAllMocks();
   });
 
@@ -75,6 +87,13 @@ describe('UsersService', () => {
     await expect(service.findOne('missing')).rejects.toBeInstanceOf(
       NotFoundException,
     );
+  });
+
+  it('lists users without selecting password hashes', async () => {
+    await service.findAll();
+
+    expect(capturedFindUsersArgs?.select.passwordHash).toBeUndefined();
+    expect(capturedFindUsersArgs?.orderBy).toEqual({ createdAt: 'desc' });
   });
 
   it('does not create a talent profile for an organization', async () => {
