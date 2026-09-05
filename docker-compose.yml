@@ -4,15 +4,19 @@ services:
     container_name: conectafreela-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: conectafreela
-      POSTGRES_PASSWORD: conectafreela
-      POSTGRES_DB: conectafreela
+      POSTGRES_USER: ${POSTGRES_USER:-conectafreela}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-conectafreela}
+      POSTGRES_DB: ${POSTGRES_DB:-conectafreela}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U conectafreela"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -24,11 +28,11 @@ services:
     container_name: conectafreela-api
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://conectafreela:conectafreela@postgres:5432/conectafreela?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-conectafreela}:${POSTGRES_PASSWORD:-conectafreela}@postgres:5432/${POSTGRES_DB:-conectafreela}?schema=public
       PORT: 3333
       WEB_URL: ${WEB_URL:-http://localhost:3000}
     ports:
-      - "3333:3333"
+      - "127.0.0.1:3333:3333"
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,7 +60,7 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3333/api}
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       api:
         condition: service_healthy
