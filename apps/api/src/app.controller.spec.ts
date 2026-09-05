@@ -15,8 +15,12 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return the API health and version', () => {
+      expect(appController.getHealth()).toEqual({
+        status: 'healthy',
+        service: 'conectafreela-api',
+        version: '0.1.0',
+      });
     });
   });
 });
