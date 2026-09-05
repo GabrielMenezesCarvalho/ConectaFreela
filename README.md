@@ -50,6 +50,7 @@ npm run lint
 npm run test
 npm run db:generate
 npm run db:migrate -- --name nome_da_migration
+npm run db:seed
 npm run db:studio
 npx shadcn@latest add button
 docker compose up -d postgres
@@ -63,3 +64,13 @@ docker compose down
 - `PATCH /api/users/:id/talent-profile`: atualiza competências, disponibilidade, bio e portfólio do talento.
 
 Login, logout e autorização ficam reservados para a história específica de autenticação.
+
+## Dados de demonstração
+
+Com o PostgreSQL em execução, popule o banco com dados reproduzíveis:
+
+```powershell
+npm run db:seed
+```
+
+A seed cria 20 talentos com seus respectivos perfis e 20 organizações. Os usuários de demonstração usam e-mails no formato `talento.01@example.com` ou `organizacao.01@example.com` e a senha `Conecta@123`.
