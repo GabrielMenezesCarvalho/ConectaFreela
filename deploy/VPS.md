@@ -81,3 +81,15 @@ curl --fail --head https://conectafreela.tech/
 curl --fail https://conectafreela.tech/api
 docker compose ps
 ```
+
+## Podman: falha de DNS interno
+
+Se a API informar `P1001` para `postgres:5432` e os containers retornarem `EAI_AGAIN` ao resolver o alias `postgres`, recrie somente os containers e a rede do projeto:
+
+```bash
+docker compose --env-file .env.production down
+podman network rm conectafreela_default 2>/dev/null || true
+docker compose --env-file .env.production up -d --build
+```
+
+O comando não utiliza `--volumes`, portanto o volume com os dados do PostgreSQL é preservado.

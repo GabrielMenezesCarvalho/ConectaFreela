@@ -37,13 +37,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://localhost:3333/api').then(() => process.exit(0)).catch(() => process.exit(1))",
-        ]
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3333/api"]
       interval: 5s
       timeout: 5s
       retries: 10
