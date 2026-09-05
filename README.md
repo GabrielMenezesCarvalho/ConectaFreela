@@ -14,7 +14,13 @@ Dockerfile          Imagens de produção para API e frontend
 
 ## Primeira execução
 
-No PowerShell:
+Com Docker:
+
+```powershell
+docker compose up --build
+```
+
+Para desenvolvimento local com hot reload:
 
 ```powershell
 Copy-Item .env.example .env
@@ -25,9 +31,9 @@ npm run dev
 ```
 
 - Frontend: http://localhost:3000
-- API: http://localhost:3333
+- API: http://localhost:3333/api
 
-O schema do Prisma está vazio. Quando a equipe definir o modelo de domínio, adicione os models em `apps/api/prisma/schema.prisma` e execute:
+O schema do Prisma contém os usuários e perfis de talento. Para criar novas migrations, execute:
 
 ```powershell
 npm run db:migrate -- --name init
@@ -49,3 +55,11 @@ npx shadcn@latest add button
 docker compose up -d postgres
 docker compose down
 ```
+
+## Cadastro e perfil de usuário
+
+- `POST /api/users`: cadastra talento ou organização.
+- `GET /api/users/:id`: consulta os dados públicos do usuário.
+- `PATCH /api/users/:id/talent-profile`: atualiza competências, disponibilidade, bio e portfólio do talento.
+
+Login, logout e autorização ficam reservados para a história específica de autenticação.

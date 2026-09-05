@@ -5,5 +5,44 @@
   --font-sans: var(--font-geist);
 }
 
-* { box-sizing: border-box; }
-body { margin: 0; font-family: Arial, Helvetica, sans-serif; }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #f4f7f2;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #dbe3df;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.75rem 0.875rem;
+  color: #0f172a;
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgb(16 185 129 / 12%);
+}

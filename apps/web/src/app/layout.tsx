@@ -5,10 +5,16 @@ import "./globals.css";
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ConectaFreela",
-  description: "Starter do projeto ConectaFreela",
+  title: "Crie sua conta | ConectaFreela",
+  description: "Cadastre-se como talento ou organização na ConectaFreela.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pt-BR"><body className={geist.variable}>{children}</body></html>;
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="pt-BR">
+      <body className={geist.variable}>{children}</body>
+    </html>
+  );
 }

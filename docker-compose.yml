@@ -38,7 +38,7 @@ services:
           "CMD",
           "node",
           "-e",
-          "fetch('http://localhost:3333').then(() => process.exit(0)).catch(() => process.exit(1))",
+          "fetch('http://localhost:3333/api').then(() => process.exit(0)).catch(() => process.exit(1))",
         ]
       interval: 5s
       timeout: 5s
