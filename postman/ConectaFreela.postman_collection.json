@@ -1,0 +1,166 @@
+{
+  "info": {
+    "_postman_id": "73afaf8c-3ab7-4e75-b6ac-eccf0aa9892e",
+    "name": "ConectaFreela API",
+    "description": "Rotas principais para demonstração da API ConectaFreela.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://conectafreela.tech/api"
+    },
+    {
+      "key": "userId",
+      "value": "COLE_O_ID_DO_USUARIO"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET - Health da API",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}"
+      }
+    },
+    {
+      "name": "GET - Listar oportunidades",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/opportunities"
+      }
+    },
+    {
+      "name": "POST - Login de talento da seed",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"talento.01@example.com\",\n  \"password\": \"Conecta@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "POST - Login de organização da seed",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"organizacao.01@example.com\",\n  \"password\": \"Conecta@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "POST - Criar talento",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  pm.collectionVariables.set('userId', pm.response.json().id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Talento Postman\",\n  \"email\": \"talento.postman.{{$timestamp}}@example.com\",\n  \"password\": \"Senha123!\",\n  \"role\": \"TALENT\",\n  \"skills\": [\"React\", \"TypeScript\"],\n  \"availability\": \"Até 5 horas por semana\",\n  \"bio\": \"Conta criada durante a demonstração.\",\n  \"portfolioLinks\": [\"https://github.com/example\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/users"
+      }
+    },
+    {
+      "name": "POST - Criar organização",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Organização Postman\",\n  \"email\": \"organizacao.postman.{{$timestamp}}@example.com\",\n  \"password\": \"Senha123!\",\n  \"role\": \"ORGANIZATION\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/users"
+      }
+    },
+    {
+      "name": "GET - Consultar usuário criado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/users/{{userId}}"
+      }
+    },
+    {
+      "name": "PATCH - Atualizar perfil do talento",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bio\": \"Perfil atualizado pelo Postman.\",\n  \"skills\": [\"React\", \"TypeScript\", \"Node.js\"],\n  \"availability\": \"De 5 a 10 horas por semana\",\n  \"portfolioLinks\": [\"https://github.com/example\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/users/{{userId}}/talent-profile"
+      }
+    }
+  ]
+}
