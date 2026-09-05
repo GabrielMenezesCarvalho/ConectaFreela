@@ -6,6 +6,8 @@ COPY apps/web/package.json apps/web/package.json
 RUN npm ci
 
 FROM base AS build
+ARG NEXT_PUBLIC_API_URL=http://localhost:3333/api
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY . .
 RUN npm run db:generate && npm run build
 
@@ -26,6 +28,6 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/apps/web/.next ./apps/web/.next
 COPY --from=build /app/apps/web/public ./apps/web/public
 COPY --from=build /app/apps/web/package.json ./apps/web/package.json
+WORKDIR /app/apps/web
 EXPOSE 3000
-CMD ["npm", "run", "start", "-w", "web"]
-
+CMD ["npm", "run", "start"]
