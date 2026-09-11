@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "73afaf8c-3ab7-4e75-b6ac-eccf0aa9892e",
     "name": "ConectaFreela API",
-    "description": "Rotas principais para demonstração da API ConectaFreela.",
+    "description": "Rotas principais para demonstração da API ConectaFreela.\n\nAs requisições estão na ordem de execução: rode a coleção inteira ou dispare os dois logins primeiro, porque eles preenchem as variáveis talentId e organizerId usadas pelo fluxo do organizador.\n\nA API ainda não emite token. O ator de cada ação vai no corpo ou na query (createdByUserId, organizerUserId, ownerUserId), então as checagens de permissão impedem erro de uso, não forja de identidade.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -13,6 +13,30 @@
     {
       "key": "userId",
       "value": "COLE_O_ID_DO_USUARIO"
+    },
+    {
+      "key": "talentId",
+      "value": "PREENCHIDO_PELO_LOGIN_DO_TALENTO"
+    },
+    {
+      "key": "organizerId",
+      "value": "PREENCHIDO_PELO_LOGIN_DA_ORGANIZACAO"
+    },
+    {
+      "key": "organizationId",
+      "value": "PREENCHIDO_PELO_PUT_DE_ORGANIZACAO"
+    },
+    {
+      "key": "opportunityId",
+      "value": "PREENCHIDO_AO_PUBLICAR_OPORTUNIDADE"
+    },
+    {
+      "key": "seededOpportunityId",
+      "value": "PREENCHIDO_PELA_LISTAGEM_DO_ORGANIZADOR"
+    },
+    {
+      "key": "applicationId",
+      "value": "PREENCHIDO_PELA_LISTAGEM_DE_CANDIDATOS"
     }
   ],
   "item": [
@@ -29,6 +53,7 @@
       "request": {
         "method": "GET",
         "header": [],
+        "description": "Vitrine pública: devolve apenas oportunidades com status ACTIVE.",
         "url": "{{baseUrl}}/opportunities"
       }
     },
@@ -42,6 +67,18 @@
     },
     {
       "name": "POST - Login de talento da seed",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  pm.collectionVariables.set('talentId', pm.response.json().user.id);",
+              "}"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -64,6 +101,18 @@
     },
     {
       "name": "POST - Login de organização da seed",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  pm.collectionVariables.set('organizerId', pm.response.json().user.id);",
+              "}"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -119,7 +168,7 @@
       }
     },
     {
-      "name": "POST - Criar organização",
+      "name": "POST - Criar usuário organizador",
       "request": {
         "method": "POST",
         "header": [
@@ -128,6 +177,7 @@
             "value": "application/json"
           }
         ],
+        "description": "Cria o usuário com papel ORGANIZATION. A organização em si é uma entidade separada e opcional — veja o PUT de organização.",
         "body": {
           "mode": "raw",
           "raw": "{\n  \"name\": \"Organização Postman\",\n  \"email\": \"organizacao.postman.{{$timestamp}}@example.com\",\n  \"password\": \"Senha123!\",\n  \"role\": \"ORGANIZATION\"\n}",
@@ -168,6 +218,253 @@
           }
         },
         "url": "{{baseUrl}}/users/{{userId}}/talent-profile"
+      }
+    },
+    {
+      "name": "GET - Consultar organização do organizador",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Corpo vazio é resposta válida: significa que o organizador",
+              "// publica em nome próprio, sem organização cadastrada.",
+              "if (pm.response.code === 200 && pm.response.text()) {",
+              "  pm.collectionVariables.set('organizationId', pm.response.json().id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/organizations?ownerUserId={{organizerId}}"
+      }
+    },
+    {
+      "name": "PUT - Criar ou atualizar organização",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('organizationId', pm.response.json().id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "Upsert pelo ownerUserId: cada organizador tem no máximo uma organização.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ownerUserId\": \"{{organizerId}}\",\n  \"name\": \"Laboratório Postman\",\n  \"description\": \"Organização criada durante a demonstração.\",\n  \"website\": \"https://exemplo.org\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/organizations"
+      }
+    },
+    {
+      "name": "POST - Publicar oportunidade pela organização",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  pm.collectionVariables.set('opportunityId', pm.response.json().id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"createdByUserId\": \"{{organizerId}}\",\n  \"organizationId\": \"{{organizationId}}\",\n  \"title\": \"Desenvolvimento de painel de indicadores\",\n  \"description\": \"Apoio no desenvolvimento de um painel para acompanhar os indicadores do projeto.\",\n  \"type\": \"VOLUNTEER\",\n  \"modality\": \"REMOTE\",\n  \"weeklyHours\": 10,\n  \"skills\": [\"React\", \"TypeScript\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/opportunities"
+      }
+    },
+    {
+      "name": "POST - Publicar oportunidade em nome próprio",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "Sem organizationId: é o caso do mestrando ou aluno de TCC que precisa de ajuda no próprio trabalho.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"createdByUserId\": \"{{organizerId}}\",\n  \"title\": \"Análise de dados da pesquisa de campo\",\n  \"description\": \"Tratamento e análise das respostas coletadas em campo para a dissertação.\",\n  \"type\": \"PAID\",\n  \"modality\": \"HYBRID\",\n  \"weeklyHours\": 20,\n  \"skills\": [\"Pesquisa acadêmica\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/opportunities"
+      }
+    },
+    {
+      "name": "GET - Listar oportunidades do organizador",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Guarda uma vaga que já tenha candidaturas, para a próxima",
+              "// requisição ter o que listar.",
+              "const list = pm.response.json();",
+              "const withApplications = list.find((item) => item._count.applications > 0);",
+              "if (withApplications) {",
+              "  pm.collectionVariables.set('seededOpportunityId', withApplications.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "description": "Diferente da vitrine pública, traz as vagas do organizador em qualquer status.",
+        "url": "{{baseUrl}}/opportunities?createdByUserId={{organizerId}}"
+      }
+    },
+    {
+      "name": "GET - Detalhar oportunidade",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/opportunities/{{opportunityId}}"
+      }
+    },
+    {
+      "name": "GET - Listar candidatos da oportunidade",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const list = pm.response.json();",
+              "if (Array.isArray(list) && list.length > 0) {",
+              "  pm.collectionVariables.set('applicationId', list[0].id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "description": "Usa uma vaga da seed, porque ainda não existe endpoint para o talento se candidatar.",
+        "url": "{{baseUrl}}/opportunities/{{seededOpportunityId}}/applications?organizerUserId={{organizerId}}"
+      }
+    },
+    {
+      "name": "PATCH - Aprovar candidatura",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "Aceita UNDER_REVIEW, APPROVED ou REJECTED. WITHDRAWN é decisão do talento e é recusado aqui com 400.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organizerUserId\": \"{{organizerId}}\",\n  \"status\": \"APPROVED\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/applications/{{applicationId}}/status"
+      }
+    },
+    {
+      "name": "PATCH - Encerrar oportunidade",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "Status CLOSED tira a vaga da vitrine pública, mas ela continua aparecendo para o organizador.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organizerUserId\": \"{{organizerId}}\",\n  \"status\": \"CLOSED\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/opportunities/{{opportunityId}}/status"
+      }
+    },
+    {
+      "name": "POST - Publicar como talento (espera 403)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "description": "Só usuários com papel ORGANIZATION podem publicar.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"createdByUserId\": \"{{talentId}}\",\n  \"title\": \"Publicação indevida\",\n  \"description\": \"Esta requisição existe para demonstrar a regra de permissão.\",\n  \"type\": \"VOLUNTEER\",\n  \"modality\": \"REMOTE\",\n  \"skills\": [\"React\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/opportunities"
+      }
+    },
+    {
+      "name": "GET - Candidatos com organizador errado (espera 403)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "description": "Só o dono da vaga enxerga as candidaturas dela.",
+        "url": "{{baseUrl}}/opportunities/{{seededOpportunityId}}/applications?organizerUserId={{talentId}}"
       }
     }
   ]

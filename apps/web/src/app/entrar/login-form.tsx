@@ -50,7 +50,9 @@ export function LoginForm() {
       const loginResult = data as LoginResult;
       saveSession(loginResult.user);
       router.replace(
-        loginResult.user.role === "ORGANIZATION" ? "/admin" : "/oportunidades",
+        loginResult.user.role === "ORGANIZATION"
+          ? "/organizacao"
+          : "/oportunidades",
       );
     } catch (requestError) {
       setError(

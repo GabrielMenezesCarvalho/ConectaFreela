@@ -22,6 +22,10 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
+  organization  Organization?
+  opportunities Opportunity[]
+  applications  Application[]
+
   @@map("users")
 }
 
@@ -37,4 +41,90 @@ model TalentProfile {
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("talent_profiles")
+}
+
+
+// ---------- Organização ----------
+// Opcional: um organizador pode publicar em nome próprio (mestrando, TCC)
+// ou em nome de uma organização. Um usuário tem no máximo uma.
+model Organization {
+  id          String   @id @default(uuid())
+  ownerUserId String   @unique
+  name        String
+  description String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner         User          @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  opportunities Opportunity[]
+
+  @@map("organizations")
+}
+
+// ---------- Oportunidade ----------
+enum OpportunityType {
+  VOLUNTEER
+  PAID
+}
+
+enum Modality {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum OpportunityStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+model Opportunity {
+  id              String            @id @default(uuid())
+  createdByUserId String            // dono da vaga — sempre presente
+  organizationId  String?           // null = publicada em nome próprio
+  title           String
+  description     String
+  type            OpportunityType
+  modality        Modality
+  weeklyHours     Int?              // 10 → a UI formata "10h/semana"
+  skills          String[]          @default([])
+  status          OpportunityStatus @default(ACTIVE)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  createdBy    User          @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  applications Application[]
+
+  @@index([status, createdAt])
+  @@index([createdByUserId, status])
+  @@map("opportunities")
+}
+
+// ---------- Candidatura ----------
+enum ApplicationStatus {
+  UNDER_REVIEW  // "Em análise"
+  APPROVED      // "Aprovado"
+  REJECTED      // "Recusado"
+  WITHDRAWN
+}
+
+model Application {
+  id            String            @id @default(uuid())
+  opportunityId String
+  talentUserId  String
+  message       String
+  status        ApplicationStatus @default(UNDER_REVIEW)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  talent      User        @relation(fields: [talentUserId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, talentUserId])   // impede candidatura duplicada
+  @@index([opportunityId, status])
+  @@index([talentUserId])
+  @@map("applications")
 }
