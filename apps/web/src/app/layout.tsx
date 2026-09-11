@@ -22,7 +22,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
+    // `data-scroll-behavior` é exigido a partir do Next 16 para que a navegação
+    // entre rotas ignore o `scroll-behavior: smooth` global do globals.css.
+    <html lang="pt-BR" data-scroll-behavior="smooth">
       <body className={`${outfit.variable} ${instrumentSerif.variable}`}>
         {children}
       </body>

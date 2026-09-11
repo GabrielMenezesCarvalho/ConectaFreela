@@ -8,16 +8,13 @@ import {
   type SessionUser,
 } from "@/lib/auth-session";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api";
-
-type Opportunity = {
-  id: string;
-  title: string;
-  organization: string;
-  category: string;
-  skills: string[];
-  description: string;
-};
+import {
+  API_URL,
+  modalityLabels,
+  opportunityAuthor,
+  typeLabels,
+  type Opportunity,
+} from "@/lib/api";
 
 type ApiUser = {
   id: string;
@@ -202,13 +199,14 @@ export function RoleDashboard({
               key={opportunity.id}
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                {opportunity.category}
+                {typeLabels[opportunity.type]} ·{" "}
+                {modalityLabels[opportunity.modality]}
               </p>
               <h2 className="mt-2 text-xl font-semibold">
                 {opportunity.title}
               </h2>
               <p className="mt-1 text-sm text-slate-500">
-                {opportunity.organization}
+                {opportunityAuthor(opportunity)}
               </p>
               <p className="mt-4 text-sm leading-6 text-slate-600">
                 {opportunity.description}
