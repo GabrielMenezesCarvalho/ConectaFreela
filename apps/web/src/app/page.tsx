@@ -4,7 +4,9 @@ import {
   ArrowRight,
   ArrowUpRight,
   Building2,
+  Check,
   CheckCircle2,
+  Crown,
   GraduationCap,
   HeartHandshake,
   Microscope,
@@ -102,6 +104,9 @@ export default function Home() {
             </a>
             <a className="transition hover:text-emerald-700" href="#para-quem">
               Para quem
+            </a>
+            <a className="transition hover:text-emerald-700" href="#planos">
+              Planos
             </a>
             <a className="transition hover:text-emerald-700" href="#comece">
               Comece agora
@@ -327,6 +332,20 @@ export default function Home() {
           </div>
         </section>
 
+        <section id="planos" className="scroll-mt-24 bg-white px-5 py-20 sm:px-8 sm:py-28">
+          <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-700">Planos para organizadores</p>
+              <h2 className="mt-4 font-display text-5xl leading-none tracking-[-0.03em] sm:text-6xl">Comece grátis. Destaque quando precisar.</h2>
+              <p className="mt-5 text-base leading-7 text-slate-500">Publique projetos sem custo e escolha o Premium para dar mais alcance às oportunidades prioritárias.</p>
+            </div>
+            <div className="mt-12 grid gap-5 lg:grid-cols-2">
+              <LandingPlan name="Gratuito" price="R$ 0" description="Para publicar projetos e conhecer a comunidade." features={["Publicação de oportunidades", "Gestão de candidaturas", "Acesso aos talentos"]} />
+              <LandingPlan premium name="Premium" price="R$ 30,00" description="Para projetos que precisam encontrar as pessoas certas primeiro." features={["Tudo do plano gratuito", "Destaques ilimitados", "Prioridade por habilidades compatíveis", "Sem taxa adicional para o organizador"]} />
+            </div>
+          </div>
+        </section>
+
         <section
           id="comece"
           className="scroll-mt-20 bg-emerald-700 px-5 py-16 text-white sm:px-8 sm:py-20"
@@ -459,5 +478,18 @@ function PathColumn({
         <ArrowUpRight size={16} aria-hidden="true" />
       </Link>
     </div>
+  );
+}
+
+function LandingPlan({ name, price, description, features, premium = false }: { name: string; price: string; description: string; features: string[]; premium?: boolean }) {
+  return (
+    <article className={`relative overflow-hidden rounded-3xl border p-7 sm:p-9 ${premium ? "border-amber-300 bg-[#063d2c] text-white shadow-xl shadow-emerald-950/10" : "border-slate-200 bg-[#f7f8f4]"}`}>
+      {premium && <span className="absolute right-5 top-5 flex items-center gap-1.5 rounded-full bg-amber-300 px-3 py-1 text-xs font-bold text-amber-950"><Crown className="size-3.5" /> Mais visibilidade</span>}
+      <p className={`text-sm font-bold ${premium ? "text-amber-300" : "text-emerald-700"}`}>{name}</p>
+      <p className="mt-3 text-4xl font-bold">{price}<span className={`ml-1 text-base font-normal ${premium ? "text-emerald-50/60" : "text-slate-500"}`}>/mês</span></p>
+      <p className={`mt-3 max-w-md text-sm leading-6 ${premium ? "text-emerald-50/70" : "text-slate-500"}`}>{description}</p>
+      <ul className="mt-7 space-y-3">{features.map((feature) => <li className={`flex gap-2.5 text-sm ${premium ? "text-emerald-50/90" : "text-slate-700"}`} key={feature}><Check className={`mt-0.5 size-4 shrink-0 ${premium ? "text-amber-300" : "text-emerald-600"}`} />{feature}</li>)}</ul>
+      <Link className={`mt-8 block rounded-xl px-5 py-3 text-center text-sm font-bold ${premium ? "bg-amber-300 text-amber-950 hover:bg-amber-200" : "border border-slate-300 bg-white text-slate-800 hover:border-emerald-400"}`} href="/cadastro?perfil=organizacao">{premium ? "Começar e assinar depois" : "Começar gratuitamente"}</Link>
+    </article>
   );
 }

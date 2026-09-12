@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { saveSession, type SessionUser } from "@/lib/auth-session";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api";
@@ -24,6 +25,7 @@ export function LoginForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,31 +69,15 @@ export function LoginForm() {
   }
 
   return (
-    <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+    <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
       <label className="block text-sm font-medium" htmlFor="email">
         E-mail
-        <input
-          className="input mt-2"
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-        />
+        <div className="relative mt-2"><Mail className="pointer-events-none absolute left-3.5 top-3.5 size-4 text-slate-400" /><input className="input pl-10" id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></div>
       </label>
 
       <label className="block text-sm font-medium" htmlFor="password">
         Senha
-        <input
-          className="input mt-2"
-          id="password"
-          name="password"
-          type="password"
-          minLength={8}
-          maxLength={72}
-          autoComplete="current-password"
-          required
-        />
+        <div className="relative mt-2"><LockKeyhole className="pointer-events-none absolute left-3.5 top-3.5 size-4 text-slate-400" /><input className="input px-10" id="password" name="password" type={showPassword ? "text" : "password"} placeholder="Sua senha" minLength={8} maxLength={72} autoComplete="current-password" required /><button className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700" type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>{showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button></div>
       </label>
 
       {error && (
@@ -104,7 +90,7 @@ export function LoginForm() {
       )}
 
       <button
-        className="w-full rounded-lg bg-emerald-700 px-4 py-3 font-semibold text-white disabled:opacity-60"
+        className="w-full rounded-xl bg-emerald-700 px-4 py-3.5 font-bold text-white shadow-lg shadow-emerald-700/15 transition hover:bg-emerald-800 disabled:opacity-60"
         type="submit"
         disabled={isSubmitting}
       >

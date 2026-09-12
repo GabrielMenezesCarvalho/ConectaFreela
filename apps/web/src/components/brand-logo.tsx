@@ -33,7 +33,7 @@ export function BrandLogo({
         alt=""
         className={
           compact
-            ? "h-5 w-auto object-contain"
+            ? "hidden h-5 w-auto object-contain min-[400px]:block"
             : "h-6 w-auto object-contain sm:h-7"
         }
         style={{ filter }}

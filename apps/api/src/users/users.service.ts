@@ -10,6 +10,7 @@ import { promisify } from 'node:util';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateTalentProfileDto } from './dto/update-talent-profile.dto';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 
 const scryptAsync = promisify(scrypt);
 
@@ -126,6 +127,20 @@ export class UsersService {
     });
 
     return this.findOne(id);
+  }
+
+  async updateProfile(id: string, dto: UpdateUserProfileDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
+
+    return this.prisma.user.update({
+      where: { id },
+      data: { name: dto.name.trim() },
+      select: publicUserSelect,
+    });
   }
 
   private cleanList(values: string[]) {
