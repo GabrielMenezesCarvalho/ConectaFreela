@@ -28,6 +28,11 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateUserDto) {
+    if (dto.role === UserRole.ADMIN) {
+      throw new BadRequestException(
+        'Contas administrativas não podem ser criadas pelo cadastro público.',
+      );
+    }
     const email = dto.email.trim().toLowerCase();
     const passwordHash = await this.hashPassword(dto.password);
 

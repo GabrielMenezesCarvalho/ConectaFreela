@@ -1,6 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { AppModule } from './app.module';
+
+// Os scripts via npm workspace executam com cwd em apps/api. Carrega o .env da
+// raiz no desenvolvimento local; no Docker, as variáveis chegam pelo ambiente.
+const localEnvPath = resolve(process.cwd(), '../../.env');
+if (existsSync(localEnvPath)) process.loadEnvFile(localEnvPath);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

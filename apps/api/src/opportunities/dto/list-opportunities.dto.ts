@@ -10,4 +10,9 @@ export class ListOpportunitiesDto {
   @IsOptional()
   @IsEnum(OpportunityStatus)
   status?: OpportunityStatus;
+
+  /** Personaliza a vitrine pelas habilidades do talento informado. */
+  @IsOptional()
+  @IsUUID()
+  talentUserId?: string;
 }

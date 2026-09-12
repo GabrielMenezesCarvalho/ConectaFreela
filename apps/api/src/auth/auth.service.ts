@@ -18,6 +18,7 @@ export class AuthService {
         name: true,
         email: true,
         role: true,
+        premiumSubscription: { select: { status: true } },
         passwordHash: true,
       },
     });
@@ -36,6 +37,9 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        ...(user.role === 'ORGANIZATION' && {
+          isPremium: user.premiumSubscription?.status === 'ACTIVE',
+        }),
       },
     };
   }

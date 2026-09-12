@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Clock, Users } from "lucide-react";
+import { ArrowRight, Clock, Sparkles, Users } from "lucide-react";
 import {
   modalityLabels,
   opportunityAuthor,
@@ -19,8 +19,14 @@ export function OpportunityCard({
   const applicationCount = opportunity._count.applications;
 
   const card = (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors hover:border-emerald-400">
-      <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4">
+    <article className={`group flex h-full flex-col overflow-hidden rounded-xl border bg-white transition-all hover:-translate-y-0.5 hover:shadow-lg ${opportunity.isFeatured ? "border-amber-300 shadow-md shadow-amber-100/70" : "border-slate-200 hover:border-emerald-400"}`}>
+      {opportunity.isFeatured && (
+        <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-400 px-5 py-2 text-xs font-bold uppercase tracking-[0.12em] text-amber-950">
+          <Sparkles aria-hidden className="size-3.5" />
+          Oportunidade destacada
+        </div>
+      )}
+      <header className={`flex items-start justify-between gap-4 border-b px-5 py-4 ${opportunity.isFeatured ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-slate-50"}`}>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-emerald-800">
             {opportunityAuthor(opportunity)}
@@ -84,7 +90,7 @@ export function OpportunityCard({
 
         {href && (
           <div className="col-span-2 flex items-center justify-end gap-1.5 border-t border-emerald-200 bg-emerald-50 px-5 py-3.5 text-sm font-semibold text-emerald-800">
-            Ver candidatos
+            Ver detalhes
             <ArrowRight aria-hidden className="size-4" />
           </div>
         )}

@@ -6,6 +6,7 @@ import {
 import { OpportunityStatus, Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto';
+import { FeatureOpportunityDto } from './dto/feature-opportunity.dto';
 import { ListOpportunitiesDto } from './dto/list-opportunities.dto';
 import { UpdateOpportunityStatusDto } from './dto/update-opportunity-status.dto';
 
@@ -18,6 +19,8 @@ const opportunitySelect = {
   weeklyHours: true,
   skills: true,
   status: true,
+  isFeatured: true,
+  featuredAt: true,
   createdAt: true,
   updatedAt: true,
   organization: { select: { id: true, name: true } },
@@ -29,10 +32,10 @@ const opportunitySelect = {
 export class OpportunitiesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(query: ListOpportunitiesDto) {
+  async findAll(query: ListOpportunitiesDto) {
     const isOwnListing = Boolean(query.createdByUserId);
 
-    return this.prisma.opportunity.findMany({
+    const opportunities = await this.prisma.opportunity.findMany({
       where: {
         ...(query.createdByUserId && {
           createdByUserId: query.createdByUserId,
@@ -48,6 +51,32 @@ export class OpportunitiesService {
       select: opportunitySelect,
       orderBy: { createdAt: 'desc' },
     });
+
+    if (!query.talentUserId || isOwnListing) return opportunities;
+
+    const talent = await this.prisma.user.findUnique({
+      where: { id: query.talentUserId },
+      select: { role: true, talentProfile: { select: { skills: true } } },
+    });
+
+    if (!talent || talent.role !== UserRole.TALENT) {
+      throw new ForbiddenException(
+        'A personalização é exclusiva para talentos.',
+      );
+    }
+
+    const talentSkills = new Set(
+      (talent.talentProfile?.skills ?? []).map((skill) => skill.toLowerCase()),
+    );
+    const rank = (opportunity: (typeof opportunities)[number]) => {
+      if (!opportunity.isFeatured) return 2;
+      const compatible = opportunity.skills.some((skill) =>
+        talentSkills.has(skill.toLowerCase()),
+      );
+      return compatible ? 0 : 1;
+    };
+
+    return opportunities.sort((left, right) => rank(left) - rank(right));
   }
 
   async findOne(id: string) {
@@ -100,6 +129,44 @@ export class OpportunitiesService {
     return this.prisma.opportunity.update({
       where: { id },
       data: { status: dto.status },
+      select: opportunitySelect,
+    });
+  }
+
+  async feature(id: string, dto: FeatureOpportunityDto) {
+    const opportunity = await this.prisma.opportunity.findUnique({
+      where: { id },
+      select: { createdByUserId: true, status: true, isFeatured: true },
+    });
+
+    if (!opportunity)
+      throw new NotFoundException('Oportunidade não encontrada.');
+    if (opportunity.createdByUserId !== dto.organizerUserId) {
+      throw new ForbiddenException(
+        'Esta oportunidade pertence a outra pessoa.',
+      );
+    }
+    if (opportunity.status !== OpportunityStatus.ACTIVE) {
+      throw new ForbiddenException(
+        'Somente oportunidades ativas podem ser destacadas.',
+      );
+    }
+
+    const subscription = await this.prisma.premiumSubscription.findUnique({
+      where: { userId: dto.organizerUserId },
+      select: { status: true },
+    });
+    if (subscription?.status !== 'ACTIVE') {
+      throw new ForbiddenException(
+        'Este recurso é exclusivo do plano Premium.',
+      );
+    }
+
+    if (opportunity.isFeatured) return this.findOne(id);
+
+    return this.prisma.opportunity.update({
+      where: { id },
+      data: { isFeatured: true, featuredAt: new Date() },
       select: opportunitySelect,
     });
   }

@@ -1,6 +1,7 @@
 import { fakerPT_BR as faker } from '@faker-js/faker';
 import {
   ApplicationStatus,
+  BillingCycle,
   Modality,
   OpportunityType,
   PrismaClient,
@@ -14,6 +15,7 @@ const scryptAsync = promisify(scrypt);
 
 const RECORDS_PER_PROFILE_TYPE = 20;
 const SEED_PASSWORD = 'Conecta@123';
+const ADMIN_EMAIL = 'admin@conectafreela.com.br';
 
 const skillCatalog = [
   'Comunicação',
@@ -117,6 +119,57 @@ async function seedOrganizations() {
         email,
         passwordHash,
         role: UserRole.ORGANIZATION,
+      },
+    });
+  }
+}
+
+async function seedAdmin() {
+  const passwordHash = await hashSeedPassword(ADMIN_EMAIL);
+  await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    update: {
+      name: 'Administrador ConectaFreela',
+      passwordHash,
+      role: UserRole.ADMIN,
+    },
+    create: {
+      name: 'Administrador ConectaFreela',
+      email: ADMIN_EMAIL,
+      passwordHash,
+      role: UserRole.ADMIN,
+    },
+  });
+}
+
+async function seedPremiumSubscriptions(organizerIds: string[]) {
+  await prisma.premiumPayment.deleteMany({
+    where: { userId: { in: organizerIds } },
+  });
+  for (const [index, userId] of organizerIds.slice(0, 4).entries()) {
+    const billingCycle = BillingCycle.MONTHLY;
+    const nextBillingAt = new Date();
+    nextBillingAt.setMonth(nextBillingAt.getMonth() + 1);
+    await prisma.premiumSubscription.upsert({
+      where: { userId },
+      create: {
+        userId,
+        billingCycle,
+        priceCents: 3000,
+        paymentMethodLast4: `42${String(index).padStart(2, '0')}`,
+        nextBillingAt,
+      },
+      update: { billingCycle, nextBillingAt, status: 'ACTIVE' },
+    });
+    await prisma.premiumPayment.create({
+      data: {
+        userId,
+        gatewayId: `seed_pix_${index + 1}`,
+        billingCycle,
+        amountCents: 3000,
+        status: 'PAID',
+        expiresAt: nextBillingAt,
+        paidAt: new Date(),
       },
     });
   }
@@ -230,6 +283,8 @@ async function seedOpportunities(organizerIds: string[]) {
           createdByUserId,
           organizationId: organization?.id ?? null,
           ...template,
+          isFeatured: index < 4 && slot === 0,
+          featuredAt: index < 4 && slot === 0 ? new Date() : null,
         },
         select: { id: true },
       });
@@ -281,6 +336,7 @@ async function main() {
 
   await seedTalents();
   await seedOrganizations();
+  await seedAdmin();
 
   const talentEmails = Array.from(
     { length: RECORDS_PER_PROFILE_TYPE },
@@ -312,6 +368,7 @@ async function main() {
     .map((user) => user.id);
 
   await seedOrganizationProfiles(organizerIds);
+  await seedPremiumSubscriptions(organizerIds);
   const opportunityIds = await seedOpportunities(organizerIds);
   const applications = await seedApplications(opportunityIds, talentIds);
 
@@ -330,6 +387,7 @@ async function main() {
   console.log(`- ${opportunityIds.length} oportunidades`);
   console.log(`- ${applications} candidaturas`);
   console.log(`Senha dos usuários de demonstração: ${SEED_PASSWORD}`);
+  console.log(`Administrador: ${ADMIN_EMAIL}`);
 }
 
 main()

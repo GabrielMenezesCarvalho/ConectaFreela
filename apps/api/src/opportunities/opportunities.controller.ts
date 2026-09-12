@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApplicationsService } from '../applications/applications.service';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto';
+import { FeatureOpportunityDto } from './dto/feature-opportunity.dto';
 import { ListOpportunitiesDto } from './dto/list-opportunities.dto';
 import { UpdateOpportunityStatusDto } from './dto/update-opportunity-status.dto';
 import { OpportunitiesService } from './opportunities.service';
@@ -50,5 +51,13 @@ export class OpportunitiesController {
     @Body() dto: UpdateOpportunityStatusDto,
   ) {
     return this.opportunitiesService.updateStatus(id, dto);
+  }
+
+  @Patch(':id/feature')
+  feature(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: FeatureOpportunityDto,
+  ) {
+    return this.opportunitiesService.feature(id, dto);
   }
 }

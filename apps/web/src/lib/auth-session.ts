@@ -2,7 +2,8 @@ export type SessionUser = {
   id: string;
   name: string;
   email: string;
-  role: "TALENT" | "ORGANIZATION";
+  role: "TALENT" | "ORGANIZATION" | "ADMIN";
+  isPremium?: boolean;
 };
 
 const SESSION_KEY = "conectafreela.user";
@@ -20,7 +21,7 @@ export function readSession(): SessionUser | null {
     if (
       !user.id ||
       !user.email ||
-      !["TALENT", "ORGANIZATION"].includes(user.role)
+      !["TALENT", "ORGANIZATION", "ADMIN"].includes(user.role)
     ) {
       return null;
     }

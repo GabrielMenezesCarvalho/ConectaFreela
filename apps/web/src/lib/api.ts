@@ -19,12 +19,43 @@ export type Opportunity = {
   weeklyHours: number | null;
   skills: string[];
   status: OpportunityStatus;
+  isFeatured: boolean;
+  featuredAt: string | null;
   createdAt: string;
   updatedAt: string;
   /** `null` quando o organizador publica em nome próprio. */
   organization: { id: string; name: string } | null;
   createdBy: { id: string; name: string };
   _count: { applications: number };
+};
+
+export type PremiumSubscription = {
+  id: string;
+  status: "ACTIVE" | "CANCELED";
+  billingCycle: "MONTHLY" | "YEARLY";
+  priceCents: number;
+  paymentMethodLast4: string;
+  startedAt: string;
+  nextBillingAt: string;
+};
+
+export type PremiumPayment = {
+  id: string;
+  gatewayId: string;
+  billingCycle: "MONTHLY" | "YEARLY";
+  amountCents: number;
+  status: "PENDING" | "PAID" | "EXPIRED" | "CANCELLED" | "REFUNDED" | "FAILED";
+  expiresAt: string;
+  paidAt: string | null;
+  createdAt: string;
+  brCode?: string;
+  brCodeBase64?: string;
+  devMode?: boolean;
+};
+
+export type PremiumPaymentResult = {
+  payment: PremiumPayment;
+  subscription: PremiumSubscription | null;
 };
 
 export type Application = {

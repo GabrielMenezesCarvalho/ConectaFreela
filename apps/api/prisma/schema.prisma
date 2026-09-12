@@ -10,6 +10,7 @@ datasource db {
 enum UserRole {
   TALENT
   ORGANIZATION
+  ADMIN
 }
 
 model User {
@@ -25,6 +26,8 @@ model User {
   organization  Organization?
   opportunities Opportunity[]
   applications  Application[]
+  premiumSubscription PremiumSubscription?
+  premiumPayments PremiumPayment[]
 
   @@map("users")
 }
@@ -91,6 +94,8 @@ model Opportunity {
   weeklyHours     Int?              // 10 → a UI formata "10h/semana"
   skills          String[]          @default([])
   status          OpportunityStatus @default(ACTIVE)
+  isFeatured      Boolean           @default(false)
+  featuredAt      DateTime?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -101,6 +106,63 @@ model Opportunity {
   @@index([status, createdAt])
   @@index([createdByUserId, status])
   @@map("opportunities")
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+  CANCELLED
+  REFUNDED
+  FAILED
+}
+
+// Assinatura simulada: registra a conversão e sustenta os recursos Premium
+// sem integrar um gateway de pagamento nesta etapa.
+model PremiumSubscription {
+  id                String             @id @default(uuid())
+  userId            String             @unique
+  status            SubscriptionStatus @default(ACTIVE)
+  billingCycle      BillingCycle
+  priceCents        Int
+  paymentMethodLast4 String
+  startedAt         DateTime           @default(now())
+  nextBillingAt     DateTime
+  updatedAt         DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, startedAt])
+  @@map("premium_subscriptions")
+}
+
+model PremiumPayment {
+  id            String        @id @default(uuid())
+  userId        String
+  gatewayId     String        @unique
+  billingCycle  BillingCycle
+  amountCents   Int
+  status        PaymentStatus @default(PENDING)
+  expiresAt     DateTime
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@map("premium_payments")
 }
 
 // ---------- Candidatura ----------

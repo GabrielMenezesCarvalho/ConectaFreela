@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { Crown } from "lucide-react";
 import { clearSession, type SessionUser } from "@/lib/auth-session";
 import { BrandLogo } from "./brand-logo";
 
@@ -29,6 +30,13 @@ export function OrganizerShell({
           </Link>
 
           <div className="flex items-center gap-4">
+            <Link
+              className={`hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold sm:inline-flex ${user.isPremium ? "bg-amber-100 text-amber-800" : "bg-emerald-50 text-emerald-800"}`}
+              href="/organizacao/premium"
+            >
+              <Crown aria-hidden className="size-3.5" />
+              {user.isPremium ? "Premium" : "Conheça o Premium"}
+            </Link>
             <span className="hidden text-sm text-slate-500 sm:inline">
               {user.name}
             </span>

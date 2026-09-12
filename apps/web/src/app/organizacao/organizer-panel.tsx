@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { OpportunityCard } from "@/components/opportunity-card";
+import { FeatureOpportunityButton } from "@/components/feature-opportunity-button";
 import { OrganizerShell } from "@/components/organizer-shell";
-import { apiFetch, isAbortError, type Opportunity } from "@/lib/api";
+import { apiFetch, isAbortError, type Opportunity, type PremiumSubscription } from "@/lib/api";
 import { useRequiredSession } from "@/lib/use-required-session";
 
 export function OrganizerPanel() {
@@ -13,18 +14,20 @@ export function OrganizerPanel() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     if (!user) return;
 
     const controller = new AbortController();
 
-    apiFetch<Opportunity[]>(`/opportunities?createdByUserId=${user.id}`, {
-      signal: controller.signal,
-      fallbackError: "Não foi possível carregar suas oportunidades.",
-    })
-      .then((list) => {
+    Promise.all([
+      apiFetch<Opportunity[]>(`/opportunities?createdByUserId=${user.id}`, { signal: controller.signal, fallbackError: "Não foi possível carregar suas oportunidades." }),
+      apiFetch<PremiumSubscription | null>(`/premium/organizers/${user.id}/subscription`, { signal: controller.signal }),
+    ])
+      .then(([list, subscription]) => {
         setOpportunities(list);
+        setIsPremium(subscription?.status === "ACTIVE");
         setIsLoading(false);
       })
       .catch((requestError: unknown) => {
@@ -53,7 +56,7 @@ export function OrganizerPanel() {
   ).length;
 
   return (
-    <OrganizerShell user={user}>
+    <OrganizerShell user={{ ...user, isPremium }}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl text-slate-950">
@@ -111,11 +114,12 @@ export function OrganizerPanel() {
       {opportunities.length > 0 && (
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {opportunities.map((opportunity) => (
-            <OpportunityCard
-              href={`/organizacao/oportunidades/${opportunity.id}`}
-              key={opportunity.id}
-              opportunity={opportunity}
-            />
+            <div className="flex flex-col gap-3" key={opportunity.id}>
+              <OpportunityCard href={`/organizacao/oportunidades/${opportunity.id}`} opportunity={opportunity} />
+              <div className="flex justify-end">
+                <FeatureOpportunityButton opportunity={opportunity} organizerUserId={user.id} isPremium={isPremium} onFeatured={(updated) => setOpportunities((current) => current.map((item) => item.id === updated.id ? updated : item))} />
+              </div>
+            </div>
           ))}
         </div>
       )}

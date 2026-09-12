@@ -31,6 +31,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-conectafreela}:${POSTGRES_PASSWORD:-conectafreela}@postgres:5432/${POSTGRES_DB:-conectafreela}?schema=public
       PORT: 3333
       WEB_URL: ${WEB_URL:-http://localhost:3000}
+      ABACATEPAY_API_KEY: ${ABACATEPAY_API_KEY}
     ports:
       - "127.0.0.1:3333:3333"
     depends_on:

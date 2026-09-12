@@ -73,7 +73,22 @@ Com o PostgreSQL em execução, popule o banco com dados reproduzíveis:
 npm run db:seed
 ```
 
-A seed cria 20 talentos com seus respectivos perfis e 20 organizações. Os usuários de demonstração usam e-mails no formato `talento.01@example.com` ou `organizacao.01@example.com` e a senha `Conecta@123`.
+A seed cria 20 talentos, 20 organizadores, assinaturas Premium simuladas e oportunidades destacadas. Os usuários de demonstração usam e-mails no formato `talento.01@example.com` ou `organizacao.01@example.com` e a senha `Conecta@123`.
+
+Para acessar o dashboard administrativo, use `admin@conectafreela.com.br` com a mesma senha.
+
+## Monetização e Premium
+
+- Plano Premium: R$ 30,00 por mês, com taxa operacional de R$ 0,80 absorvida pela plataforma.
+- Meta de rentabilidade: 12 assinaturas mensais (R$ 360,00 brutos e R$ 350,40 após as taxas de pagamento).
+- `/organizacao/premium`: apresenta os benefícios e planos para organizadores.
+- `/organizacao/premium/assinar`: gera um PIX pela AbacatePay e ativa o Premium somente após a confirmação do pagamento.
+- No painel do organizador, assinantes Premium podem destacar oportunidades ativas.
+- `/oportunidades`: prioriza destaques compatíveis com as habilidades do talento.
+- `/oportunidades/:id`: exibe todos os detalhes e prepara o fluxo de candidatura.
+- `/admin`: mostra ativação, conversão Premium, retenção, receita recorrente, transações e adoção de destaques.
+
+A API exige `ABACATEPAY_API_KEY` no ambiente do servidor. Chaves `abc_dev_...` habilitam o botão de simulação do pagamento no sandbox; a chave nunca deve ser exposta como variável `NEXT_PUBLIC_*`.
 
 ## Deploy em produção
 
