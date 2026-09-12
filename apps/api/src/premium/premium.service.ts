@@ -71,7 +71,7 @@ export class PremiumService {
   }
 
   async createPixPayment(dto: CreatePixPaymentDto) {
-    const organizer = await this.assertOrganizer(dto.organizerUserId);
+    await this.assertOrganizer(dto.organizerUserId);
     const billingCycle = BillingCycle.MONTHLY;
     const amountCents = PREMIUM_MONTHLY_PRICE_CENTS;
     const externalId = `premium-${dto.organizerUserId}-${Date.now()}`;
@@ -87,7 +87,6 @@ export class PremiumService {
             expiresIn: 1800,
             description: 'ConectaFreela Premium - Mensal',
             externalId,
-            customer: { name: organizer.name, email: organizer.email },
             metadata: {
               organizerUserId: dto.organizerUserId,
               billingCycle,
