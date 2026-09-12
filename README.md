@@ -73,9 +73,20 @@ Com o PostgreSQL em execução, popule o banco com dados reproduzíveis:
 npm run db:seed
 ```
 
-A seed cria 20 talentos, 20 organizadores, assinaturas Premium simuladas e oportunidades destacadas. Os usuários de demonstração usam e-mails no formato `talento.01@example.com` ou `organizacao.01@example.com` e a senha `Conecta@123`.
+A seed cria 20 talentos, 20 organizadores, assinaturas Premium simuladas e oportunidades destacadas. Todos os usuários de demonstração usam a senha `Conecta@123`.
 
-Para acessar o dashboard administrativo, use `admin@conectafreela.com.br` com a mesma senha.
+### Contas de demonstração por perfil
+
+| Perfil | E-mail | Senha | Exemplo de uso |
+| --- | --- | --- | --- |
+| Talento | `talento.01@example.com` | `Conecta@123` | Feed personalizado, filtros, detalhes de oportunidades e perfil profissional |
+| Organizador gratuito | `organizacao.05@example.com` | `Conecta@123` | Publicação e gestão de oportunidades, perfil da organização e oferta do Premium |
+| Organizador Premium | `organizacao.01@example.com` | `Conecta@123` | Recursos Premium e até 3 oportunidades ativas destacadas por vez |
+| Administrador | `admin@conectafreela.com.br` | `Conecta@123` | Dashboard administrativo e métricas de monetização |
+
+Também estão disponíveis `talento.01@example.com` até `talento.20@example.com` e `organizacao.01@example.com` até `organizacao.20@example.com`. Os organizadores `01` a `04` possuem assinatura Premium ativa criada pela seed.
+
+Essas credenciais são exclusivas para demonstração e desenvolvimento. Não reutilize a senha da seed em contas reais.
 
 ## Monetização e Premium
 

@@ -3,11 +3,8 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  BarChart3,
   Check,
   Crown,
-  Sparkles,
-  Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { OrganizerShell } from "@/components/organizer-shell";
@@ -16,17 +13,17 @@ import { useRequiredSession } from "@/lib/use-required-session";
 
 const benefits = [
   {
-    icon: Sparkles,
+    number: "01",
     title: "Oportunidades destacadas",
     text: "Ganhe prioridade na vitrine e atraia talentos compatíveis primeiro.",
   },
   {
-    icon: BarChart3,
+    number: "02",
     title: "Mais visibilidade",
     text: "Amplie o alcance das publicações mais importantes da sua organização.",
   },
   {
-    icon: Zap,
+    number: "03",
     title: "Conexões mais rápidas",
     text: "Destaque projetos sem depender apenas da ordem de publicação.",
   },
@@ -40,7 +37,7 @@ const freeFeatures = [
 
 const premiumFeatures = [
   "Tudo do plano Gratuito",
-  "Destaques ilimitados",
+  "Até 3 anúncios destacados por vez",
   "Prioridade para talentos compatíveis",
   "Identidade visual Premium",
 ];
@@ -111,19 +108,32 @@ export function PremiumOffer() {
         />
       </section>
 
-      <section className="mt-8 grid gap-4 md:grid-cols-3">
-        {benefits.map(({ icon: Icon, title, text }) => (
-          <article
-            className="rounded-2xl border border-slate-200 bg-white p-6"
-            key={title}
-          >
-            <span className="flex size-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
-              <Icon className="size-5" />
-            </span>
-            <h2 className="mt-5 text-lg font-bold">{title}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
-          </article>
-        ))}
+      <section className="mt-8 overflow-hidden rounded-[2rem] border border-emerald-950/10 bg-[#f1efe7]">
+        <div className="grid gap-4 border-b border-emerald-950/10 px-6 py-7 sm:px-9 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-800">
+            O que muda na prática
+          </p>
+          <p className="max-w-xl text-lg leading-7 text-slate-700">
+            Você escolhe quais projetos precisam de atenção agora. A plataforma
+            cuida de colocá-los diante dos talentos mais relevantes.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 md:divide-x md:divide-emerald-950/10">
+          {benefits.map(({ number, title, text }) => (
+            <article
+              className="border-b border-emerald-950/10 px-6 py-8 last:border-b-0 sm:px-9 md:border-b-0"
+              key={title}
+            >
+              <span className="font-mono text-xs text-emerald-800/60">
+                {number}
+              </span>
+              <h2 className="mt-8 max-w-[13rem] font-display text-2xl leading-tight text-emerald-950">
+                {title}
+              </h2>
+              <p className="mt-4 text-sm leading-6 text-slate-600">{text}</p>
+            </article>
+          ))}
+        </div>
       </section>
     </OrganizerShell>
   );

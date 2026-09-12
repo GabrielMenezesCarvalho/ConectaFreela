@@ -258,7 +258,7 @@ export function PremiumCheckout() {
             <strong>R$ 30,00</strong>
           </div>
           <ul className="mt-5 space-y-3 text-sm text-emerald-50/80">
-            {["Destaques ilimitados", "Prioridade para talentos compatíveis", "Pagamento PIX processado pela AbacatePay"].map((item) => (
+            {["Até 3 anúncios destacados por vez", "Prioridade para talentos compatíveis", "Pagamento PIX processado pela AbacatePay"].map((item) => (
               <li className="flex gap-2" key={item}>
                 <Check className="size-4 text-amber-300" /> {item}
               </li>

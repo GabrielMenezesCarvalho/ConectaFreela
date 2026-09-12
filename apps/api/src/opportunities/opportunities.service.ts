@@ -164,6 +164,20 @@ export class OpportunitiesService {
 
     if (opportunity.isFeatured) return this.findOne(id);
 
+    const featuredOpportunities = await this.prisma.opportunity.count({
+      where: {
+        createdByUserId: dto.organizerUserId,
+        isFeatured: true,
+        status: OpportunityStatus.ACTIVE,
+      },
+    });
+
+    if (featuredOpportunities >= 3) {
+      throw new ForbiddenException(
+        'O plano Premium permite até 3 oportunidades destacadas por vez.',
+      );
+    }
+
     return this.prisma.opportunity.update({
       where: { id },
       data: { isFeatured: true, featuredAt: new Date() },

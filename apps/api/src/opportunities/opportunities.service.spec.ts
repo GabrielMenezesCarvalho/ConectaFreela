@@ -25,13 +25,24 @@ describe('OpportunitiesService', () => {
     capturedCreateArgs = args;
     return Promise.resolve({ id: 'opp-id' });
   });
+  const findOpportunity = jest.fn();
+  const countOpportunities = jest.fn();
+  const updateOpportunity = jest.fn();
+  const findSubscription = jest.fn();
   const findUser =
     jest.fn<() => Promise<{ id: string; role: UserRole } | null>>();
   const findOrganization =
     jest.fn<() => Promise<{ ownerUserId: string } | null>>();
 
   const prisma = {
-    opportunity: { findMany: findOpportunities, create: createOpportunity },
+    opportunity: {
+      findMany: findOpportunities,
+      findUnique: findOpportunity,
+      create: createOpportunity,
+      count: countOpportunities,
+      update: updateOpportunity,
+    },
+    premiumSubscription: { findUnique: findSubscription },
     user: { findUnique: findUser },
     organization: { findUnique: findOrganization },
   } as unknown as PrismaService;
@@ -108,5 +119,24 @@ describe('OpportunitiesService', () => {
     await expect(service.create(validDto)).rejects.toBeInstanceOf(
       NotFoundException,
     );
+  });
+
+  it('limits Premium organizers to three active featured opportunities', async () => {
+    findOpportunity.mockResolvedValue({
+      createdByUserId: 'organizer-id',
+      status: OpportunityStatus.ACTIVE,
+      isFeatured: false,
+    });
+    findSubscription.mockResolvedValue({ status: 'ACTIVE' });
+    countOpportunities.mockResolvedValue(3);
+
+    await expect(
+      service.feature('opportunity-id', {
+        organizerUserId: 'organizer-id',
+      }),
+    ).rejects.toThrow(
+      'O plano Premium permite até 3 oportunidades destacadas por vez.',
+    );
+    expect(updateOpportunity).not.toHaveBeenCalled();
   });
 });
