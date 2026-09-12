@@ -157,9 +157,15 @@ async function seedPremiumSubscriptions(organizerIds: string[]) {
         billingCycle,
         priceCents: 3000,
         paymentMethodLast4: `42${String(index).padStart(2, '0')}`,
+        featuredCredits: 3,
         nextBillingAt,
       },
-      update: { billingCycle, nextBillingAt, status: 'ACTIVE' },
+      update: {
+        billingCycle,
+        nextBillingAt,
+        status: 'ACTIVE',
+        featuredCredits: 3,
+      },
     });
     await prisma.premiumPayment.create({
       data: {
@@ -296,6 +302,18 @@ async function seedOpportunities(organizerIds: string[]) {
   return ids;
 }
 
+async function syncSeedFeaturedCredits(organizerIds: string[]) {
+  for (const userId of organizerIds.slice(0, 4)) {
+    const usedCredits = await prisma.opportunity.count({
+      where: { createdByUserId: userId, isFeatured: true },
+    });
+    await prisma.premiumSubscription.update({
+      where: { userId },
+      data: { featuredCredits: Math.max(0, 3 - usedCredits) },
+    });
+  }
+}
+
 async function seedApplications(opportunityIds: string[], talentIds: string[]) {
   const statuses = [
     ApplicationStatus.UNDER_REVIEW,
@@ -370,6 +388,7 @@ async function main() {
   await seedOrganizationProfiles(organizerIds);
   await seedPremiumSubscriptions(organizerIds);
   const opportunityIds = await seedOpportunities(organizerIds);
+  await syncSeedFeaturedCredits(organizerIds);
   const applications = await seedApplications(opportunityIds, talentIds);
 
   const [talentProfiles, organizations] = await Promise.all([

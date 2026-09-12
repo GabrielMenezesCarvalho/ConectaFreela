@@ -14,7 +14,7 @@ export function OrganizerPanel() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isPremium, setIsPremium] = useState(false);
+  const [subscription, setSubscription] = useState<PremiumSubscription | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -27,7 +27,7 @@ export function OrganizerPanel() {
     ])
       .then(([list, subscription]) => {
         setOpportunities(list);
-        setIsPremium(subscription?.status === "ACTIVE");
+        setSubscription(subscription);
         setIsLoading(false);
       })
       .catch((requestError: unknown) => {
@@ -54,6 +54,8 @@ export function OrganizerPanel() {
   const activeCount = opportunities.filter(
     (opportunity) => opportunity.status === "ACTIVE",
   ).length;
+  const isPremium = subscription?.status === "ACTIVE";
+  const remainingCredits = subscription?.featuredCredits ?? 0;
 
   return (
     <OrganizerShell user={{ ...user, isPremium }}>
@@ -83,10 +85,11 @@ export function OrganizerPanel() {
       )}
 
       {!error && (
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <SummaryCard label="Oportunidades" value={opportunities.length} />
           <SummaryCard label="Ativas" value={activeCount} />
           <SummaryCard label="Candidaturas" value={totalApplications} />
+          <SummaryCard label="Destaques restantes" value={remainingCredits} accent={isPremium} />
         </section>
       )}
 
@@ -117,7 +120,7 @@ export function OrganizerPanel() {
             <div className="flex flex-col gap-3" key={opportunity.id}>
               <OpportunityCard href={`/organizacao/oportunidades/${opportunity.id}`} opportunity={opportunity} />
               <div className="flex justify-end">
-                <FeatureOpportunityButton opportunity={opportunity} organizerUserId={user.id} isPremium={isPremium} onFeatured={(updated) => setOpportunities((current) => current.map((item) => item.id === updated.id ? updated : item))} />
+                <FeatureOpportunityButton opportunity={opportunity} organizerUserId={user.id} isPremium={isPremium} remainingCredits={remainingCredits} onFeatured={(updated, credits) => { setOpportunities((current) => current.map((item) => item.id === updated.id ? updated : item)); setSubscription((current) => current ? { ...current, featuredCredits: credits } : current); }} />
               </div>
             </div>
           ))}
@@ -127,11 +130,11 @@ export function OrganizerPanel() {
   );
 }
 
-function SummaryCard({ label, value }: { label: string; value: number }) {
+function SummaryCard({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-5">
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-2 text-3xl font-semibold">{value}</p>
+    <article className={`rounded-xl border p-5 ${accent ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-white"}`}>
+      <p className={accent ? "text-sm text-amber-800" : "text-sm text-slate-500"}>{label}</p>
+      <p className={`mt-2 text-3xl font-semibold ${accent ? "text-amber-950" : ""}`}>{value}</p>
     </article>
   );
 }

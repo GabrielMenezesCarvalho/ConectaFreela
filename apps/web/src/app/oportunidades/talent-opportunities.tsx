@@ -1,6 +1,7 @@
 "use client";
 
-import { Filter, RotateCcw, Search, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { FileText, Filter, RotateCcw, Search, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { TalentShell } from "@/components/talent-shell";
@@ -63,7 +64,7 @@ export function TalentOpportunities() {
   return <TalentShell user={user}>
     <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
       <div><p className="text-sm font-semibold text-emerald-700">Projetos para você</p><h1 className="mt-1 font-display text-3xl leading-tight sm:text-4xl lg:text-5xl">Encontre sua próxima oportunidade</h1><p className="mt-2 text-sm text-slate-500">Destaques compatíveis com suas habilidades aparecem primeiro.</p></div>
-      {recommendedCount > 0 && <span className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-bold text-amber-800"><Sparkles className="size-4" /> {recommendedCount} recomendação{recommendedCount > 1 ? "es" : ""}</span>}
+      <div className="flex flex-wrap gap-2"><Link className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-emerald-700" href="/candidaturas"><FileText className="size-4" /> Minhas candidaturas</Link>{recommendedCount > 0 && <span className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-bold text-amber-800"><Sparkles className="size-4" /> {recommendedCount} recomendação{recommendedCount > 1 ? "es" : ""}</span>}</div>
     </div>
 
     <section className="mt-7 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-label="Filtros de oportunidades">

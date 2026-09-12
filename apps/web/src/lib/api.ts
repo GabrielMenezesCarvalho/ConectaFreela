@@ -35,6 +35,7 @@ export type PremiumSubscription = {
   billingCycle: "MONTHLY" | "YEARLY";
   priceCents: number;
   paymentMethodLast4: string;
+  featuredCredits: number;
   startedAt: string;
   nextBillingAt: string;
 };
@@ -58,13 +59,26 @@ export type PremiumPaymentResult = {
   subscription: PremiumSubscription | null;
 };
 
+export type FeatureOpportunityResult = {
+  opportunity: Opportunity;
+  remainingFeaturedCredits: number;
+};
+
 export type Application = {
   id: string;
   message: string;
   status: ApplicationStatus;
   createdAt: string;
   updatedAt: string;
-  opportunity: { id: string; title: string };
+  opportunity: {
+    id: string;
+    title: string;
+    status: OpportunityStatus;
+    type: OpportunityType;
+    modality: Modality;
+    organization: { id: string; name: string } | null;
+    createdBy: { id: string; name: string };
+  };
   talent: {
     id: string;
     name: string;

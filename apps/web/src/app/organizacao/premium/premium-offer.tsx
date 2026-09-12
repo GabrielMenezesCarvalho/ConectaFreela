@@ -37,7 +37,7 @@ const freeFeatures = [
 
 const premiumFeatures = [
   "Tudo do plano Gratuito",
-  "Até 3 anúncios destacados por vez",
+  "3 créditos de destaque por pagamento",
   "Prioridade para talentos compatíveis",
   "Identidade visual Premium",
 ];
@@ -101,6 +101,7 @@ export function PremiumOffer() {
         <PlanCard
           description="Para oportunidades que precisam chegar às pessoas certas."
           features={premiumFeatures}
+          featuredCredits={subscription?.featuredCredits ?? 0}
           isCurrent={Boolean(isPremium)}
           name="Premium"
           price="R$ 30,00"
@@ -146,6 +147,7 @@ function PlanCard({
   features,
   premium = false,
   isCurrent = false,
+  featuredCredits = 0,
 }: {
   name: string;
   price: string;
@@ -153,6 +155,7 @@ function PlanCard({
   features: string[];
   premium?: boolean;
   isCurrent?: boolean;
+  featuredCredits?: number;
 }) {
   return (
     <article
@@ -187,8 +190,13 @@ function PlanCard({
       </ul>
       {premium &&
         (isCurrent ? (
-          <div className="mt-7 rounded-xl bg-emerald-100 px-5 py-3 text-center font-bold text-emerald-800">
-            Seu plano atual
+          <div className="mt-7 space-y-3">
+            <div className="rounded-xl bg-emerald-100 px-5 py-3 text-center font-bold text-emerald-800">
+              {featuredCredits} crédito{featuredCredits === 1 ? "" : "s"} disponível{featuredCredits === 1 ? "" : "is"}
+            </div>
+            <Link className="block rounded-xl border border-amber-300 bg-white px-5 py-3 text-center font-bold text-amber-900 hover:bg-amber-50" href="/organizacao/premium/assinar">
+              Comprar mais 3 destaques
+            </Link>
           </div>
         ) : (
           <Link

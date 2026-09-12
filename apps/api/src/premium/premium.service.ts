@@ -17,6 +17,7 @@ import { CreatePixPaymentDto } from './dto/create-pix-payment.dto';
 
 const ABACATEPAY_URL = 'https://api.abacatepay.com/v2';
 const PREMIUM_MONTHLY_PRICE_CENTS = 3000;
+const FEATURED_CREDITS_PER_PAYMENT = 3;
 
 const subscriptionSelect = {
   id: true,
@@ -24,6 +25,7 @@ const subscriptionSelect = {
   billingCycle: true,
   priceCents: true,
   paymentMethodLast4: true,
+  featuredCredits: true,
   startedAt: true,
   nextBillingAt: true,
 } satisfies Prisma.PremiumSubscriptionSelect;
@@ -85,7 +87,7 @@ export class PremiumService {
           data: {
             amount: amountCents,
             expiresIn: 1800,
-            description: 'ConectaFreela Premium - Mensal',
+            description: 'ConectaFreela Premium - Mensal (3 destaques)',
             externalId,
             metadata: {
               organizerUserId: dto.organizerUserId,
@@ -160,19 +162,37 @@ export class PremiumService {
         (payment.billingCycle === BillingCycle.YEARLY ? 12 : 1),
     );
 
-    const [updatedPayment, subscription] = await this.prisma.$transaction([
-      this.prisma.premiumPayment.update({
-        where: { id: payment.id },
+    return this.prisma.$transaction(async (transaction) => {
+      const claimedPayment = await transaction.premiumPayment.updateMany({
+        where: { id: payment.id, status: { not: PaymentStatus.PAID } },
         data: { status: PaymentStatus.PAID, paidAt: new Date() },
+      });
+
+      const updatedPayment = await transaction.premiumPayment.findUnique({
+        where: { id: payment.id },
         select: paymentSelect,
-      }),
-      this.prisma.premiumSubscription.upsert({
+      });
+      if (!updatedPayment) {
+        throw new NotFoundException('Pagamento não encontrado.');
+      }
+
+      if (claimedPayment.count === 0) {
+        const existingSubscription =
+          await transaction.premiumSubscription.findUnique({
+            where: { userId: payment.userId },
+            select: subscriptionSelect,
+          });
+        return { payment: updatedPayment, subscription: existingSubscription };
+      }
+
+      const subscription = await transaction.premiumSubscription.upsert({
         where: { userId: payment.userId },
         create: {
           userId: payment.userId,
           billingCycle: payment.billingCycle,
           priceCents: payment.amountCents,
           paymentMethodLast4: 'PIX',
+          featuredCredits: FEATURED_CREDITS_PER_PAYMENT,
           nextBillingAt,
         },
         update: {
@@ -180,14 +200,15 @@ export class PremiumService {
           billingCycle: payment.billingCycle,
           priceCents: payment.amountCents,
           paymentMethodLast4: 'PIX',
+          featuredCredits: { increment: FEATURED_CREDITS_PER_PAYMENT },
           startedAt: new Date(),
           nextBillingAt,
         },
         select: subscriptionSelect,
-      }),
-    ]);
+      });
 
-    return { payment: updatedPayment, subscription };
+      return { payment: updatedPayment, subscription };
+    });
   }
 
   private async paymentResult(

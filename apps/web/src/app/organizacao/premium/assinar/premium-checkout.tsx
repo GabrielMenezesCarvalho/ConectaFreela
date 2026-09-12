@@ -133,7 +133,7 @@ export function PremiumCheckout() {
           </span>
           <h1 className="mt-6 font-display text-4xl">Pagamento confirmado!</h1>
           <p className="mt-3 text-slate-500">
-            A AbacatePay confirmou seu PIX e o acesso Premium já está ativo.
+            A AbacatePay confirmou seu PIX. Você agora tem {subscription.featuredCredits} crédito{subscription.featuredCredits === 1 ? "" : "s"} de destaque.
           </p>
           <Link
             className="mt-7 inline-flex rounded-xl bg-emerald-700 px-6 py-3 font-bold text-white"
@@ -155,8 +155,8 @@ export function PremiumCheckout() {
         <ArrowLeft className="size-4" /> Voltar aos benefícios
       </Link>
 
-      <div className="mx-auto mt-6 grid max-w-4xl gap-6 lg:grid-cols-[1fr_0.8fr]">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+      <div className="mx-auto mt-6 grid max-w-4xl gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)]">
+        <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
           <p className="text-sm font-semibold text-emerald-700">
             Pagamento seguro via AbacatePay
           </p>
@@ -169,8 +169,8 @@ export function PremiumCheckout() {
               <div className="mt-7 rounded-2xl border-2 border-emerald-500 bg-emerald-50 p-5 ring-4 ring-emerald-100">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <span className="font-bold text-emerald-950">Premium mensal</span>
-                    <p className="mt-1 text-sm text-slate-500">Acesso completo, renovado mensalmente</p>
+                    <span className="font-bold text-emerald-950">Premium mensal + 3 destaques</span>
+                    <p className="mt-1 text-sm text-slate-500">Cada pagamento aprovado adiciona 3 créditos</p>
                   </div>
                   <p className="text-right text-2xl font-bold text-emerald-950">R$ 30,00<span className="block text-xs font-normal text-slate-500">por mês</span></p>
                 </div>
@@ -194,11 +194,12 @@ export function PremiumCheckout() {
               </button>
             </>
           ) : (
-            <div className="mt-7 text-center">
+            <div className="min-w-0 mt-7 text-center">
               {payment.brCodeBase64 && (
-                <div className="mx-auto w-fit rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                <div className="mx-auto w-full max-w-[246px] rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
                   <Image
                     alt="QR Code PIX da assinatura Premium"
+                    className="h-auto w-full"
                     height={220}
                     src={payment.brCodeBase64}
                     unoptimized
@@ -210,12 +211,12 @@ export function PremiumCheckout() {
                 <Clock3 className="size-4" /> Aguardando pagamento
               </p>
               {payment.brCode && (
-                <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left">
-                  <p className="truncate text-xs text-slate-500">
+                <div className="mt-5 min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-left">
+                  <p className="max-h-14 overflow-hidden break-all font-mono text-[11px] leading-5 text-slate-500">
                     {payment.brCode}
                   </p>
                   <button
-                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-bold text-emerald-700 shadow-sm"
+                    className="mt-3 flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-lg bg-white px-3 py-2.5 text-center text-sm font-bold text-emerald-700 shadow-sm"
                     onClick={copyPix}
                   >
                     {copied ? <CheckCircle2 className="size-4" /> : <Clipboard className="size-4" />}
@@ -250,7 +251,7 @@ export function PremiumCheckout() {
           )}
         </section>
 
-        <aside className="h-fit rounded-2xl bg-[#063d2c] p-6 text-white sm:p-8">
+        <aside className="h-fit min-w-0 overflow-hidden rounded-2xl bg-[#063d2c] p-6 text-white sm:p-8">
           <QrCode className="size-7 text-amber-300" />
           <h2 className="mt-5 text-xl font-bold">Resumo</h2>
           <div className="mt-6 flex justify-between border-b border-white/15 pb-5">
@@ -258,9 +259,9 @@ export function PremiumCheckout() {
             <strong>R$ 30,00</strong>
           </div>
           <ul className="mt-5 space-y-3 text-sm text-emerald-50/80">
-            {["Até 3 anúncios destacados por vez", "Prioridade para talentos compatíveis", "Pagamento PIX processado pela AbacatePay"].map((item) => (
-              <li className="flex gap-2" key={item}>
-                <Check className="size-4 text-amber-300" /> {item}
+            {["3 créditos de destaque por pagamento", "Prioridade para talentos compatíveis", "Pagamento PIX processado pela AbacatePay"].map((item) => (
+              <li className="flex min-w-0 gap-2" key={item}>
+                <Check className="size-4 shrink-0 text-amber-300" /> <span className="break-words">{item}</span>
               </li>
             ))}
           </ul>

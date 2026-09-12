@@ -136,6 +136,7 @@ model PremiumSubscription {
   billingCycle      BillingCycle
   priceCents        Int
   paymentMethodLast4 String
+  featuredCredits   Int                @default(0)
   startedAt         DateTime           @default(now())
   nextBillingAt     DateTime
   updatedAt         DateTime           @updatedAt

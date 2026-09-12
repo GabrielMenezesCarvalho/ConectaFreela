@@ -154,7 +154,7 @@ export class OpportunitiesService {
 
     const subscription = await this.prisma.premiumSubscription.findUnique({
       where: { userId: dto.organizerUserId },
-      select: { status: true },
+      select: { status: true, featuredCredits: true },
     });
     if (subscription?.status !== 'ACTIVE') {
       throw new ForbiddenException(
@@ -162,26 +162,60 @@ export class OpportunitiesService {
       );
     }
 
-    if (opportunity.isFeatured) return this.findOne(id);
-
-    const featuredOpportunities = await this.prisma.opportunity.count({
-      where: {
-        createdByUserId: dto.organizerUserId,
-        isFeatured: true,
-        status: OpportunityStatus.ACTIVE,
-      },
-    });
-
-    if (featuredOpportunities >= 3) {
+    if (opportunity.isFeatured) {
+      return {
+        opportunity: await this.findOne(id),
+        remainingFeaturedCredits: subscription.featuredCredits,
+      };
+    }
+    if (subscription.featuredCredits < 1) {
       throw new ForbiddenException(
-        'O plano Premium permite até 3 oportunidades destacadas por vez.',
+        'Seus créditos de destaque acabaram. Adquira mais 3 para continuar.',
       );
     }
 
-    return this.prisma.opportunity.update({
-      where: { id },
-      data: { isFeatured: true, featuredAt: new Date() },
-      select: opportunitySelect,
+    return this.prisma.$transaction(async (transaction) => {
+      const consumed = await transaction.premiumSubscription.updateMany({
+        where: {
+          userId: dto.organizerUserId,
+          status: 'ACTIVE',
+          featuredCredits: { gt: 0 },
+        },
+        data: { featuredCredits: { decrement: 1 } },
+      });
+      if (consumed.count === 0) {
+        throw new ForbiddenException(
+          'Seus créditos de destaque acabaram. Adquira mais 3 para continuar.',
+        );
+      }
+
+      const featured = await transaction.opportunity.updateMany({
+        where: { id, isFeatured: false },
+        data: { isFeatured: true, featuredAt: new Date() },
+      });
+      if (featured.count === 0) {
+        throw new ForbiddenException('Esta oportunidade já foi destacada.');
+      }
+
+      const [updatedOpportunity, updatedSubscription] = await Promise.all([
+        transaction.opportunity.findUnique({
+          where: { id },
+          select: opportunitySelect,
+        }),
+        transaction.premiumSubscription.findUnique({
+          where: { userId: dto.organizerUserId },
+          select: { featuredCredits: true },
+        }),
+      ]);
+
+      if (!updatedOpportunity || !updatedSubscription) {
+        throw new NotFoundException('Não foi possível concluir o destaque.');
+      }
+
+      return {
+        opportunity: updatedOpportunity,
+        remainingFeaturedCredits: updatedSubscription.featuredCredits,
+      };
     });
   }
 

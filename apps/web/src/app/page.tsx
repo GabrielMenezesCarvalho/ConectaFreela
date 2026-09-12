@@ -341,7 +341,7 @@ export default function Home() {
             </div>
             <div className="mt-12 grid gap-5 lg:grid-cols-2">
               <LandingPlan name="Gratuito" price="R$ 0" description="Para publicar projetos e conhecer a comunidade." features={["Publicação de oportunidades", "Gestão de candidaturas", "Acesso aos talentos"]} />
-              <LandingPlan premium name="Premium" price="R$ 30,00" description="Para projetos que precisam encontrar as pessoas certas primeiro." features={["Tudo do plano gratuito", "Até 3 anúncios destacados por vez", "Prioridade por habilidades compatíveis", "Sem taxa adicional para o organizador"]} />
+              <LandingPlan premium name="Premium" price="R$ 30,00" description="Para projetos que precisam encontrar as pessoas certas primeiro." features={["Tudo do plano gratuito", "3 créditos de destaque por pagamento", "Prioridade por habilidades compatíveis", "Sem taxa adicional para o organizador"]} />
             </div>
           </div>
         </section>

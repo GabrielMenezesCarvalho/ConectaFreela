@@ -26,25 +26,44 @@ describe('OpportunitiesService', () => {
     return Promise.resolve({ id: 'opp-id' });
   });
   const findOpportunity = jest.fn();
-  const countOpportunities = jest.fn();
   const updateOpportunity = jest.fn();
+  const updateManyOpportunities = jest.fn();
   const findSubscription = jest.fn();
+  const updateManySubscriptions = jest.fn();
   const findUser =
     jest.fn<() => Promise<{ id: string; role: UserRole } | null>>();
   const findOrganization =
     jest.fn<() => Promise<{ ownerUserId: string } | null>>();
+  const transactionClient = {
+    opportunity: {
+      findUnique: findOpportunity,
+      updateMany: updateManyOpportunities,
+    },
+    premiumSubscription: {
+      findUnique: findSubscription,
+      updateMany: updateManySubscriptions,
+    },
+  };
+  const runTransaction = jest.fn(
+    (operation: (transaction: typeof transactionClient) => Promise<unknown>) =>
+      operation(transactionClient),
+  );
 
   const prisma = {
     opportunity: {
       findMany: findOpportunities,
       findUnique: findOpportunity,
       create: createOpportunity,
-      count: countOpportunities,
       update: updateOpportunity,
+      updateMany: updateManyOpportunities,
     },
-    premiumSubscription: { findUnique: findSubscription },
+    premiumSubscription: {
+      findUnique: findSubscription,
+      updateMany: updateManySubscriptions,
+    },
     user: { findUnique: findUser },
     organization: { findUnique: findOrganization },
+    $transaction: runTransaction,
   } as unknown as PrismaService;
   const service = new OpportunitiesService(prisma);
 
@@ -121,22 +140,48 @@ describe('OpportunitiesService', () => {
     );
   });
 
-  it('limits Premium organizers to three active featured opportunities', async () => {
+  it('rejects featuring when the organizer has no credits left', async () => {
     findOpportunity.mockResolvedValue({
       createdByUserId: 'organizer-id',
       status: OpportunityStatus.ACTIVE,
       isFeatured: false,
     });
-    findSubscription.mockResolvedValue({ status: 'ACTIVE' });
-    countOpportunities.mockResolvedValue(3);
+    findSubscription.mockResolvedValue({
+      status: 'ACTIVE',
+      featuredCredits: 0,
+    });
 
     await expect(
       service.feature('opportunity-id', {
         organizerUserId: 'organizer-id',
       }),
-    ).rejects.toThrow(
-      'O plano Premium permite até 3 oportunidades destacadas por vez.',
-    );
+    ).rejects.toThrow('Seus créditos de destaque acabaram.');
     expect(updateOpportunity).not.toHaveBeenCalled();
+  });
+
+  it('consumes one credit when featuring an opportunity', async () => {
+    findOpportunity
+      .mockResolvedValueOnce({
+        createdByUserId: 'organizer-id',
+        status: OpportunityStatus.ACTIVE,
+        isFeatured: false,
+      })
+      .mockResolvedValueOnce({ id: 'opportunity-id', isFeatured: true });
+    findSubscription
+      .mockResolvedValueOnce({ status: 'ACTIVE', featuredCredits: 2 })
+      .mockResolvedValueOnce({ featuredCredits: 1 });
+    updateManySubscriptions.mockResolvedValue({ count: 1 });
+    updateManyOpportunities.mockResolvedValue({ count: 1 });
+
+    const result = await service.feature('opportunity-id', {
+      organizerUserId: 'organizer-id',
+    });
+
+    expect(result.remainingFeaturedCredits).toBe(1);
+    expect(updateManySubscriptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: { featuredCredits: { decrement: 1 } },
+      }),
+    );
   });
 });

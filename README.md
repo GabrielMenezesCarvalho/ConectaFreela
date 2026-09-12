@@ -81,7 +81,7 @@ A seed cria 20 talentos, 20 organizadores, assinaturas Premium simuladas e oport
 | --- | --- | --- | --- |
 | Talento | `talento.01@example.com` | `Conecta@123` | Feed personalizado, filtros, detalhes de oportunidades e perfil profissional |
 | Organizador gratuito | `organizacao.05@example.com` | `Conecta@123` | Publicação e gestão de oportunidades, perfil da organização e oferta do Premium |
-| Organizador Premium | `organizacao.01@example.com` | `Conecta@123` | Recursos Premium e até 3 oportunidades ativas destacadas por vez |
+| Organizador Premium | `organizacao.01@example.com` | `Conecta@123` | Recursos Premium e saldo de créditos para destacar oportunidades |
 | Administrador | `admin@conectafreela.com.br` | `Conecta@123` | Dashboard administrativo e métricas de monetização |
 
 Também estão disponíveis `talento.01@example.com` até `talento.20@example.com` e `organizacao.01@example.com` até `organizacao.20@example.com`. Os organizadores `01` a `04` possuem assinatura Premium ativa criada pela seed.
@@ -94,9 +94,11 @@ Essas credenciais são exclusivas para demonstração e desenvolvimento. Não re
 - Meta de rentabilidade: 12 assinaturas mensais (R$ 360,00 brutos e R$ 350,40 após as taxas de pagamento).
 - `/organizacao/premium`: apresenta os benefícios e planos para organizadores.
 - `/organizacao/premium/assinar`: gera um PIX pela AbacatePay e ativa o Premium somente após a confirmação do pagamento.
-- No painel do organizador, assinantes Premium podem destacar oportunidades ativas.
+- Cada pagamento Premium aprovado adiciona 3 créditos de destaque; destacar uma oportunidade ativa consome 1 crédito.
+- O painel do organizador mostra o saldo restante e permite comprar novos créditos.
 - `/oportunidades`: prioriza destaques compatíveis com as habilidades do talento.
-- `/oportunidades/:id`: exibe todos os detalhes e prepara o fluxo de candidatura.
+- `/oportunidades/:id`: exibe os detalhes e permite enviar ou retirar uma candidatura.
+- `/candidaturas`: permite ao Talento acompanhar mensagens, status e decisões dos organizadores.
 - `/admin`: mostra ativação, conversão Premium, retenção, receita recorrente, transações e adoção de destaques.
 
 A API exige `ABACATEPAY_API_KEY` no ambiente do servidor. Chaves `abc_dev_...` habilitam o botão de simulação do pagamento no sandbox; a chave nunca deve ser exposta como variável `NEXT_PUBLIC_*`.
