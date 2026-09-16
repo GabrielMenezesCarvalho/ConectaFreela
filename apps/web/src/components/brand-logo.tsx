@@ -23,7 +23,7 @@ export function BrandLogo({
         className={
           compact
             ? "h-8 w-8 object-contain"
-            : "h-10 w-10 object-contain sm:h-11 sm:w-11"
+            : "h-9 w-9 object-contain sm:h-11 sm:w-11"
         }
         style={{ filter }}
         priority={!compact}
@@ -34,7 +34,7 @@ export function BrandLogo({
         className={
           compact
             ? "hidden h-5 w-auto object-contain min-[400px]:block"
-            : "h-6 w-auto object-contain sm:h-7"
+            : "hidden h-5 w-auto object-contain min-[360px]:block sm:h-7"
         }
         style={{ filter }}
         priority={!compact}

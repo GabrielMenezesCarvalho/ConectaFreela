@@ -87,8 +87,8 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#f7f8f4] text-[#0a1a12]">
       <header className="sticky top-0 z-50 border-b border-emerald-950/10 bg-[#f7f8f4]/95 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <Link href="/" aria-label="Página inicial">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-20 sm:px-8">
+          <Link className="shrink-0" href="/" aria-label="Página inicial">
             <BrandLogo />
           </Link>
 
@@ -113,18 +113,21 @@ export default function Home() {
             </a>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-3">
             <Link
-              className="px-3 py-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-700"
+              className="px-2 py-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-700 sm:px-3"
               href="/entrar"
             >
               Entrar
             </Link>
             <Link
-              className="rounded-xl bg-[#0a1a12] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 sm:px-5"
+              className="whitespace-nowrap rounded-xl bg-[#0a1a12] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 sm:px-5"
               href="/cadastro"
             >
-              Cadastrar grátis
+              {/* Em telas estreitas o "grátis" é o que empurra o botão para
+                  duas linhas e cola no logo. */}
+              <span className="sm:hidden">Cadastrar</span>
+              <span className="hidden sm:inline">Cadastrar grátis</span>
             </Link>
           </div>
         </div>
