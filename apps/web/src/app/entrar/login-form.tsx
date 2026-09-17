@@ -3,7 +3,11 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
-import { saveSession, type SessionUser } from "@/lib/auth-session";
+import {
+  dashboardPathForRole,
+  saveSession,
+  type SessionUser,
+} from "@/lib/auth-session";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api";
 
@@ -51,13 +55,7 @@ export function LoginForm() {
 
       const loginResult = data as LoginResult;
       saveSession(loginResult.user);
-      router.replace(
-        loginResult.user.role === "ADMIN"
-          ? "/admin"
-          : loginResult.user.role === "ORGANIZATION"
-            ? "/organizacao"
-            : "/oportunidades",
-      );
+      router.replace(dashboardPathForRole(loginResult.user.role));
     } catch (requestError) {
       setError(
         requestError instanceof Error

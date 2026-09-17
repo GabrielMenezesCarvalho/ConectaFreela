@@ -12,7 +12,9 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { dashboardPathForRole, saveSession } from "@/lib/auth-session";
 import logo from "@/assets/landing/connectafreela.png";
 
 type UserRole = "TALENT" | "ORGANIZATION";
@@ -38,19 +40,18 @@ export default function CadastroForm({
 }: {
   initialRole?: UserRole;
 }) {
+  const router = useRouter();
   const [role, setRole] = useState<UserRole>(initialRole);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [createdUser, setCreatedUser] = useState<CreatedUser | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formElement = event.currentTarget;
     setError("");
-    setCreatedUser(null);
     setIsSubmitting(true);
 
-    const form = new FormData(formElement);
+    // Lido antes do await: currentTarget fica nulo depois que o evento é liberado.
+    const form = new FormData(event.currentTarget);
     const payload = {
       name: form.get("name"),
       email: form.get("email"),
@@ -79,15 +80,23 @@ export default function CadastroForm({
         throw new Error(message || "Não foi possível criar sua conta.");
       }
 
-      setCreatedUser(data);
-      formElement.reset();
+      // Já entra logado: a conta recém-criada vale como sessão.
+      const createdUser = data as CreatedUser;
+      saveSession({
+        id: createdUser.id,
+        name: createdUser.name,
+        email: createdUser.email,
+        role: createdUser.role,
+      });
+      router.replace(dashboardPathForRole(createdUser.role));
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
           ? submissionError.message
           : "Não foi possível conectar à API.",
       );
-    } finally {
+      // Mantém o botão travado no caminho feliz, senão ele volta a
+      // "Criar minha conta" durante a navegação.
       setIsSubmitting(false);
     }
   }
@@ -325,22 +334,6 @@ export default function CadastroForm({
               >
                 {error}
               </p>
-            )}
-
-            {createdUser && (
-              <div
-                className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3"
-                aria-live="polite"
-              >
-                <p className="font-semibold text-emerald-900">
-                  Conta criada com sucesso!
-                </p>
-                <p className="mt-1 text-sm text-emerald-700">
-                  Bem-vindo, {createdUser.name}. Seu perfil de{" "}
-                  {createdUser.role === "TALENT" ? "talento" : "organização"}{" "}
-                  está pronto.
-                </p>
-              </div>
             )}
 
             <button

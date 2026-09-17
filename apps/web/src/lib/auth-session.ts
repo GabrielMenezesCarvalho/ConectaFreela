@@ -8,6 +8,13 @@ export type SessionUser = {
 
 const SESSION_KEY = "conectafreela.user";
 
+/** Destino após entrar ou criar conta. Compartilhado para login e cadastro não divergirem. */
+export function dashboardPathForRole(role: SessionUser["role"]) {
+  if (role === "ADMIN") return "/admin";
+  if (role === "ORGANIZATION") return "/organizacao";
+  return "/oportunidades";
+}
+
 export function saveSession(user: SessionUser) {
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
 }
