@@ -70,6 +70,8 @@ export type Application = {
   status: ApplicationStatus;
   createdAt: string;
   updatedAt: string;
+  /** Presente quando o organizador abriu o chat; null enquanto não abriu. */
+  conversation: { id: string } | null;
   opportunity: {
     id: string;
     title: string;
@@ -182,3 +184,58 @@ export async function apiFetch<T>(
 export function isAbortError(error: unknown) {
   return error instanceof DOMException && error.name === "AbortError";
 }
+
+export type Message = {
+  id: string;
+  conversationId: string;
+  senderUserId: string;
+  body: string;
+  readAt: string | null;
+  createdAt: string;
+};
+
+export type Conversation = {
+  id: string;
+  applicationId: string;
+  enabledByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+  application: {
+    id: string;
+    status: ApplicationStatus;
+    talent: { id: string; name: string };
+    opportunity: {
+      id: string;
+      title: string;
+      createdByUserId: string;
+      organization: { name: string } | null;
+      createdBy: { id: string; name: string };
+    };
+  };
+};
+
+export type ConversationSummary = Conversation & {
+  lastMessage: Message | null;
+  unreadCount: number;
+};
+
+export type ConversationDetail = Conversation & { messages: Message[] };
+
+/** Do ponto de vista de `userId`, com quem se está falando. */
+export function conversationCounterpart(
+  conversation: Conversation,
+  userId: string,
+) {
+  const isTalent = conversation.application.talent.id === userId;
+  if (isTalent) {
+    const { organization, createdBy } = conversation.application.opportunity;
+    return organization?.name ?? createdBy.name;
+  }
+  return conversation.application.talent.name;
+}
+
+/** `total` alimenta o badge global; `byConversation` o aviso por conversa. */
+export type UnreadSummary = {
+  total: number;
+  byConversation: Record<string, number>;
+};
