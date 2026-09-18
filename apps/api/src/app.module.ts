@@ -9,6 +9,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { PremiumModule } from './premium/premium.module';
 import { AdminModule } from './admin/admin.module';
+import { ConversationsModule } from './conversations/conversations.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AdminModule } from './admin/admin.module';
     ApplicationsModule,
     PremiumModule,
     AdminModule,
+    ConversationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
