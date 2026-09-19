@@ -76,7 +76,11 @@ O produto atende três perfis:
 
 ## Diagrama de casos de uso
 
-![Diagrama de casos de uso do ConectaFreela com atores UML](docs/diagrams/casos-de-uso.svg)
+<p align="center">
+  <a href="https://github.com/GabrielMenezesCarvalho/ConectaFreela/blob/main/docs/diagrams/casos-de-uso.svg">
+    <img src="./docs/diagrams/casos-de-uso.svg" alt="Diagrama de casos de uso do ConectaFreela com atores UML" width="100%" />
+  </a>
+</p>
 
 ## Fluxo do usuário
 
