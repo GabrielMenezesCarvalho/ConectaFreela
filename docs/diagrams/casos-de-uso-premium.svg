@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1450" height="960" viewBox="0 0 1450 960" role="img" aria-labelledby="title desc">
+  <title id="title">Casos de uso do Premium</title>
+  <desc id="desc">Diagrama UML da assinatura Premium, pagamentos PIX, créditos e destaques.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.12" /></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#dc2626" stroke-width="1.8" /></marker>
+  </defs>
+  <rect width="1450" height="960" fill="#f8fafc" />
+  <rect x="190" y="50" width="1070" height="860" rx="28" fill="#ffffff" stroke="#334155" stroke-width="3" />
+  <rect x="220" y="75" width="330" height="50" rx="25" fill="#db2777" /><text x="385" y="108" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="700">Casos de uso — Premium</text>
+
+  <g fill="none" stroke="#db2777" stroke-width="3" opacity="0.58"><path d="M155 460 L275 180" /><path d="M155 460 L275 320" /><path d="M155 460 L275 460" /><path d="M155 460 L275 740" /></g>
+  <g fill="none" stroke="#dc2626" stroke-width="3" opacity="0.58"><path d="M1295 460 L1105 320" /><path d="M1295 460 L1105 460" /><path d="M1295 460 L1105 590" /></g>
+
+  <g font-family="Inter, Arial, sans-serif" font-size="18" font-weight="650" text-anchor="middle" fill="#ffffff" filter="url(#shadow)">
+    <ellipse cx="460" cy="180" rx="185" ry="45" fill="#db2777" stroke="#9d174d" stroke-width="3" /><text x="460" y="186">Consultar assinatura</text>
+    <ellipse cx="460" cy="320" rx="185" ry="45" fill="#db2777" stroke="#9d174d" stroke-width="3" /><text x="460" y="326">Gerar pagamento PIX</text>
+    <ellipse cx="460" cy="460" rx="185" ry="45" fill="#db2777" stroke="#9d174d" stroke-width="3" /><text x="460" y="466">Consultar pagamento</text>
+    <ellipse cx="460" cy="740" rx="185" ry="45" fill="#db2777" stroke="#9d174d" stroke-width="3" /><text x="460" y="746">Destacar oportunidade</text>
+
+    <ellipse cx="920" cy="320" rx="185" ry="45" fill="#dc2626" stroke="#991b1b" stroke-width="3" /><text x="920" y="326">Criar cobrança externa</text>
+    <ellipse cx="920" cy="460" rx="185" ry="45" fill="#dc2626" stroke="#991b1b" stroke-width="3" /><text x="920" y="466">Consultar status externo</text>
+    <ellipse cx="920" cy="590" rx="185" ry="45" fill="#dc2626" stroke="#991b1b" stroke-width="3" /><text x="920" y="586">Simular pagamento</text><text x="920" y="609">no sandbox</text>
+
+    <ellipse cx="460" cy="590" rx="185" ry="45" fill="#008f5a" stroke="#006b44" stroke-width="3" /><text x="460" y="586">Ativar ou renovar</text><text x="460" y="609">assinatura</text>
+    <ellipse cx="690" cy="850" rx="185" ry="45" fill="#008f5a" stroke="#006b44" stroke-width="3" /><text x="690" y="846">Validar e consumir</text><text x="690" y="869">um crédito</text>
+    <ellipse cx="920" cy="740" rx="185" ry="45" fill="#008f5a" stroke="#006b44" stroke-width="3" /><text x="920" y="736">Adicionar três créditos</text><text x="920" y="759">de destaque</text>
+  </g>
+
+  <g fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="9 7" marker-end="url(#arrow)">
+    <path d="M645 320 H735" /><path d="M645 460 H735" /><path d="M920 545 V505" />
+    <path d="M460 545 V505" /><path d="M645 590 H735 V740" /><path d="M645 740 H690 V805" />
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#991b1b" text-anchor="middle">
+    <text x="690" y="305">«include»</text><text x="690" y="445">«include»</text><text x="1005" y="530">«extend»</text>
+    <text x="545" y="530">«extend»</text><text x="730" y="650">«include»</text><text x="745" y="790">«include»</text>
+  </g>
+
+  <g fill="none" stroke="#db2777" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><circle cx="90" cy="375" r="27" fill="#fce7f3" /><path d="M90 402 V470 M48 433 H132 M90 470 L52 520 M90 470 L128 520" /></g>
+  <text x="90" y="560" text-anchor="middle" fill="#9d174d" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="750">Organizador</text>
+  <rect x="1275" y="390" width="155" height="120" rx="18" fill="#dc2626" stroke="#991b1b" stroke-width="3" filter="url(#shadow)" />
+  <text x="1352" y="435" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="650">Sistema externo</text><text x="1352" y="470" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="21" font-weight="750">AbacatePay</text>
+</svg>

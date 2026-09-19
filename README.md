@@ -82,6 +82,60 @@ O produto atende três perfis:
   </a>
 </p>
 
+## Diagramas detalhados de casos de uso
+
+Nos diagramas abaixo, `«include»` representa um comportamento obrigatório reutilizado pelo caso de uso de origem. `«extend»` representa um comportamento opcional ou condicionado a uma regra do sistema.
+
+<details>
+  <summary><strong>Talento</strong></summary>
+  <br />
+  <p align="center">
+    <a href="https://github.com/GabrielMenezesCarvalho/ConectaFreela/blob/main/docs/diagrams/casos-de-uso-talento.svg">
+      <img src="./docs/diagrams/casos-de-uso-talento.svg" alt="Diagrama detalhado de casos de uso do Talento" width="100%" />
+    </a>
+  </p>
+</details>
+
+<details>
+  <summary><strong>Organizador</strong></summary>
+  <br />
+  <p align="center">
+    <a href="https://github.com/GabrielMenezesCarvalho/ConectaFreela/blob/main/docs/diagrams/casos-de-uso-organizador.svg">
+      <img src="./docs/diagrams/casos-de-uso-organizador.svg" alt="Diagrama detalhado de casos de uso do Organizador" width="100%" />
+    </a>
+  </p>
+</details>
+
+<details>
+  <summary><strong>Administrador</strong></summary>
+  <br />
+  <p align="center">
+    <a href="https://github.com/GabrielMenezesCarvalho/ConectaFreela/blob/main/docs/diagrams/casos-de-uso-administrador.svg">
+      <img src="./docs/diagrams/casos-de-uso-administrador.svg" alt="Diagrama detalhado de casos de uso do Administrador" width="100%" />
+    </a>
+  </p>
+</details>
+
+<details>
+  <summary><strong>Premium e pagamentos</strong></summary>
+  <br />
+  <p align="center">
+    <a href="https://github.com/GabrielMenezesCarvalho/ConectaFreela/blob/main/docs/diagrams/casos-de-uso-premium.svg">
+      <img src="./docs/diagrams/casos-de-uso-premium.svg" alt="Diagrama detalhado de casos de uso do Premium" width="100%" />
+    </a>
+  </p>
+</details>
+
+<details>
+  <summary><strong>Comunicação e mensagens</strong></summary>
+  <br />
+  <p align="center">
+    <a href="https://github.com/GabrielMenezesCarvalho/ConectaFreela/blob/main/docs/diagrams/casos-de-uso-comunicacao.svg">
+      <img src="./docs/diagrams/casos-de-uso-comunicacao.svg" alt="Diagrama detalhado de casos de uso da Comunicação" width="100%" />
+    </a>
+  </p>
+</details>
+
 ## Fluxo do usuário
 
 ```mermaid
