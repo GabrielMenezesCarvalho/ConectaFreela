@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ExternalLink, MessagesSquare } from "lucide-react";
 import { useEffect, useState } from "react";
 import { OrganizerShell } from "@/components/organizer-shell";
 import {
@@ -29,12 +30,14 @@ const decisions: ApplicationStatus[] = [
 ];
 
 export function CandidatesReview({ opportunityId }: { opportunityId: string }) {
+  const router = useRouter();
   const user = useRequiredSession("ORGANIZATION");
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [chatPendingId, setChatPendingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -102,6 +105,41 @@ export function CandidatesReview({ opportunityId }: { opportunityId: string }) {
     }
   }
 
+  // Abrir o chat é prerrogativa do organizador: o talento não tem esta ação.
+  async function enableChat(application: Application) {
+    if (!user || application.conversation) return;
+
+    setError("");
+    setChatPendingId(application.id);
+
+    try {
+      const conversation = await apiFetch<{ id: string }>("/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          applicationId: application.id,
+          organizerUserId: user.id,
+        }),
+        fallbackError: "Não foi possível abrir a conversa.",
+      });
+
+      setApplications((current) =>
+        current.map((item) =>
+          item.id === application.id
+            ? { ...item, conversation: { id: conversation.id } }
+            : item,
+        ),
+      );
+      router.push(`/mensagens/${conversation.id}`);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Não foi possível conectar à API.",
+      );
+    } finally {
+      setChatPendingId(null);
+    }
+  }
   if (!user) {
     return <div className="min-h-screen bg-slate-50" />;
   }
@@ -240,6 +278,27 @@ export function CandidatesReview({ opportunityId }: { opportunityId: string }) {
                   </p>
                 ) : (
                   <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+                    {application.conversation ? (
+                      <Link
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 transition-colors hover:bg-emerald-100"
+                        href={`/mensagens/${application.conversation.id}`}
+                      >
+                        <MessagesSquare aria-hidden className="size-4" />
+                        Abrir conversa
+                      </Link>
+                    ) : (
+                      <button
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={chatPendingId === application.id}
+                        onClick={() => enableChat(application)}
+                        type="button"
+                      >
+                        <MessagesSquare aria-hidden className="size-4" />
+                        {chatPendingId === application.id
+                          ? "Abrindo..."
+                          : "Habilitar chat"}
+                      </button>
+                    )}
                     {decisions.map((decision) => {
                       const active = application.status === decision;
 

@@ -22,6 +22,8 @@ const applicationSelect = {
   status: true,
   createdAt: true,
   updatedAt: true,
+  // Presente quando o organizador já abriu o chat desta candidatura.
+  conversation: { select: { id: true } },
   opportunity: {
     select: {
       id: true,

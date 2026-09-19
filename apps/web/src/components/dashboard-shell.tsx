@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Crown, LogOut, UserRound } from "lucide-react";
+import { Crown, LogOut, MessagesSquare, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { clearSession, type SessionUser } from "@/lib/auth-session";
+import { useUnreadMessages } from "@/lib/use-unread-messages";
 import { BrandLogo } from "./brand-logo";
 
 export function DashboardShell({
@@ -19,6 +20,7 @@ export function DashboardShell({
   showPremium?: boolean;
 }) {
   const router = useRouter();
+  const unread = useUnreadMessages(user.id);
 
   function logout() {
     clearSession();
@@ -34,6 +36,22 @@ export function DashboardShell({
           </Link>
 
           <nav className="flex shrink-0 items-center gap-1.5 sm:gap-2" aria-label="Conta">
+            <Link
+              className="relative flex size-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 sm:h-10 sm:w-auto sm:px-3"
+              href="/mensagens"
+              title="Mensagens"
+            >
+              <MessagesSquare aria-hidden className="size-4" />
+              <span className="ml-1.5 hidden text-xs font-bold sm:inline">Mensagens</span>
+              {unread.total > 0 && (
+                <span
+                  className="absolute -right-0.5 -top-0.5 flex min-w-5 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-[11px] font-bold leading-5 text-white ring-2 ring-white sm:static sm:ml-1.5 sm:ring-0"
+                  aria-label={`${unread.total} mensagens nao lidas`}
+                >
+                  {unread.total > 99 ? "99+" : unread.total}
+                </span>
+              )}
+            </Link>
             {showPremium && (
               <Link
                 className={`flex size-10 items-center justify-center rounded-xl sm:h-10 sm:w-auto sm:px-3 ${
