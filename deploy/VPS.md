@@ -5,7 +5,7 @@ Esta configuração considera:
 - domínio `conectafreela.tech` apontando para `179.198.113.50`;
 - Nginx instalado diretamente na VPS;
 - aplicação executada pelo Docker Compose;
-- portas 3000, 3333 e 5432 disponíveis somente no `localhost` da VPS.
+- portas 3000, 3333 e 5433 disponíveis somente no `localhost` da VPS.
 
 ## 1. Preparar as variáveis
 
