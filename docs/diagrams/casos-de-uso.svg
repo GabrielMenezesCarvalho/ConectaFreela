@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" role="img" aria-labelledby="title description">
+  <title id="title">Diagrama de casos de uso do ConectaFreela</title>
+  <desc id="description">Atores Talento, Organizador e Administrador interagindo com os casos de uso da plataforma, além da integração externa com a AbacatePay.</desc>
+
+  <rect width="1400" height="860" fill="#f8fafc" />
+  <rect x="220" y="30" width="960" height="800" rx="24" fill="#ffffff" stroke="#0f766e" stroke-width="3" />
+  <rect x="245" y="50" width="250" height="42" rx="21" fill="#047857" />
+  <text x="370" y="77" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700">ConectaFreela</text>
+
+  <!-- Associações dos atores aos casos de uso -->
+  <g fill="none" stroke="#94a3b8" stroke-width="2">
+    <path d="M160 340 L290 120" />
+    <path d="M160 340 L600 120" />
+    <path d="M160 340 L290 250" />
+    <path d="M160 340 L275 365" />
+    <path d="M160 340 L290 480" />
+    <path d="M160 340 L555 590" />
+
+    <path d="M1240 500 L840 120" />
+    <path d="M1240 500 L1055 250" />
+    <path d="M1240 500 L1055 365" />
+    <path d="M1240 500 L1055 480" />
+    <path d="M1240 500 L845 590" />
+    <path d="M1240 500 L665 730" />
+    <path d="M1240 500 L1025 730" />
+
+    <path d="M1240 145 L570 120" />
+    <path d="M1240 145 L1125 120" />
+    <path d="M1210 755 L665 730" stroke-dasharray="8 7" />
+  </g>
+
+  <!-- Casos de uso compartilhados -->
+  <g font-family="Inter, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#0f172a">
+    <ellipse cx="430" cy="120" rx="140" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="430" y="126">Criar conta e entrar</text>
+
+    <ellipse cx="720" cy="120" rx="120" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="720" y="126">Gerenciar perfil</text>
+
+    <ellipse cx="1000" cy="120" rx="125" ry="42" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5" />
+    <text x="1000" y="116">Consultar métricas</text>
+    <text x="1000" y="137">da plataforma</text>
+  </g>
+
+  <!-- Casos de uso do talento -->
+  <g font-family="Inter, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#0f172a">
+    <ellipse cx="430" cy="250" rx="140" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="430" y="256">Buscar oportunidades</text>
+
+    <ellipse cx="430" cy="365" rx="155" ry="46" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="430" y="361">Enviar ou retirar</text>
+    <text x="430" y="382">candidatura</text>
+
+    <ellipse cx="430" cy="480" rx="140" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="430" y="476">Acompanhar</text>
+    <text x="430" y="497">candidatura</text>
+  </g>
+
+  <!-- Casos de uso do organizador -->
+  <g font-family="Inter, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#0f172a">
+    <ellipse cx="900" cy="250" rx="155" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="900" y="256">Publicar oportunidade</text>
+
+    <ellipse cx="900" cy="365" rx="155" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="900" y="371">Analisar candidaturas</text>
+
+    <ellipse cx="900" cy="480" rx="155" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="900" y="486">Liberar conversa</text>
+  </g>
+
+  <!-- Comunicação e Premium -->
+  <g font-family="Inter, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#0f172a">
+    <ellipse cx="700" cy="590" rx="145" ry="42" fill="#ecfdf5" stroke="#10b981" stroke-width="2.5" />
+    <text x="700" y="596">Trocar mensagens</text>
+
+    <ellipse cx="520" cy="730" rx="145" ry="42" fill="#fffbeb" stroke="#f59e0b" stroke-width="2.5" />
+    <text x="520" y="736">Assinar Premium</text>
+
+    <ellipse cx="880" cy="730" rx="145" ry="42" fill="#fffbeb" stroke="#f59e0b" stroke-width="2.5" />
+    <text x="880" y="736">Destacar oportunidade</text>
+  </g>
+
+  <!-- Ator: Talento -->
+  <g fill="none" stroke="#047857" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="110" cy="270" r="25" fill="#d1fae5" />
+    <path d="M110 295 L110 360 M70 325 L150 325 M110 360 L75 405 M110 360 L145 405" />
+  </g>
+  <text x="110" y="442" text-anchor="middle" fill="#064e3b" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700">Talento</text>
+
+  <!-- Ator: Administrador -->
+  <g fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="1290" cy="75" r="25" fill="#dbeafe" />
+    <path d="M1290 100 L1290 160 M1250 128 L1330 128 M1290 160 L1255 205 M1290 160 L1325 205" />
+  </g>
+  <text x="1290" y="237" text-anchor="middle" fill="#1e3a8a" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700">Administrador</text>
+
+  <!-- Ator: Organizador -->
+  <g fill="none" stroke="#047857" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="1290" cy="430" r="25" fill="#d1fae5" />
+    <path d="M1290 455 L1290 520 M1250 485 L1330 485 M1290 520 L1255 565 M1290 520 L1325 565" />
+  </g>
+  <text x="1290" y="602" text-anchor="middle" fill="#064e3b" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700">Organizador</text>
+
+  <!-- Sistema externo -->
+  <rect x="1210" y="710" width="165" height="90" rx="14" fill="#fff7ed" stroke="#f59e0b" stroke-width="3" />
+  <text x="1292" y="747" text-anchor="middle" fill="#92400e" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="600">Sistema externo</text>
+  <text x="1292" y="776" text-anchor="middle" fill="#78350f" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">AbacatePay</text>
+</svg>

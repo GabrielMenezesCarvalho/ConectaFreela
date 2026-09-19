@@ -76,48 +76,7 @@ O produto atende três perfis:
 
 ## Diagrama de casos de uso
 
-```mermaid
-flowchart LR
-    talent((Talento))
-    organizer((Organizador))
-    admin((Administrador))
-    payment((AbacatePay))
-
-    subgraph platform ["Plataforma ConectaFreela"]
-        account(["Criar conta e entrar"])
-        profile(["Gerenciar perfil"])
-        discover(["Buscar oportunidades"])
-        apply(["Enviar ou retirar candidatura"])
-        track(["Acompanhar candidatura"])
-        chat(["Trocar mensagens"])
-        publish(["Publicar oportunidade"])
-        review(["Analisar candidaturas"])
-        enableChat(["Liberar conversa"])
-        subscribe(["Assinar Premium"])
-        feature(["Destacar oportunidade"])
-        metrics(["Consultar métricas"])
-    end
-
-    talent --> account
-    talent --> profile
-    talent --> discover
-    talent --> apply
-    talent --> track
-    talent --> chat
-
-    organizer --> account
-    organizer --> profile
-    organizer --> publish
-    organizer --> review
-    organizer --> enableChat
-    organizer --> chat
-    organizer --> subscribe
-    organizer --> feature
-
-    admin --> account
-    admin --> metrics
-    subscribe -.-> payment
-```
+![Diagrama de casos de uso do ConectaFreela com atores UML](docs/diagrams/casos-de-uso.svg)
 
 ## Fluxo do usuário
 
